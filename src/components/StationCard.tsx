@@ -2,7 +2,6 @@ import { LucideIcon } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
-
 interface StationCardProps {
   id: string;
   name: string;
@@ -12,19 +11,22 @@ interface StationCardProps {
   trayId: string;
   trayParts: string[];
 }
-
-const StationCard = ({ name, icon: Icon, description, trayId }: StationCardProps) => {
-  const { toast } = useToast();
-
+const StationCard = ({
+  name,
+  icon: Icon,
+  description,
+  trayId
+}: StationCardProps) => {
+  const {
+    toast
+  } = useToast();
   const handleRelease = () => {
     toast({
       title: `${name} Released`,
-      description: `Tray ${trayId} has been released`,
+      description: `Tray ${trayId} has been released`
     });
   };
-
-  return (
-    <Card className="group relative overflow-hidden bg-card/50 backdrop-blur-xl border-border hover:border-accent/50 transition-all duration-300">
+  return <Card className="group relative overflow-hidden bg-card/50 backdrop-blur-xl border-border hover:border-accent/50 transition-all duration-300">
       <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-accent/10 opacity-0 group-hover:opacity-100 transition-opacity" />
       
       <div className="relative p-3 space-y-2">
@@ -35,7 +37,7 @@ const StationCard = ({ name, icon: Icon, description, trayId }: StationCardProps
           
           <div>
             <h3 className="text-sm font-bold text-foreground mb-0.5">{name}</h3>
-            <p className="text-xs text-secondary font-medium">{description}</p>
+            
           </div>
         </div>
         
@@ -43,15 +45,10 @@ const StationCard = ({ name, icon: Icon, description, trayId }: StationCardProps
           <p className="text-xs font-semibold text-foreground">{trayId}</p>
         </div>
         
-        <Button
-          onClick={handleRelease}
-          className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold text-xs py-1.5 transition-all hover:scale-[1.02] active:scale-[0.98]"
-        >
+        <Button onClick={handleRelease} className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold text-xs py-1.5 transition-all hover:scale-[1.02] active:scale-[0.98]">
           Release
         </Button>
       </div>
-    </Card>
-  );
+    </Card>;
 };
-
 export default StationCard;
