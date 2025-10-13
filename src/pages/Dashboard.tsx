@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Cpu, Boxes, DoorOpen, MoveVertical, Lock, Cuboid, X } from "lucide-react";
+import { Cpu, Boxes, DoorOpen, MoveVertical, Lock, Cuboid, X, LogOut } from "lucide-react";
 import FeatureCard from "@/components/FeatureCard";
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from "@/components/ui/drawer";
 import { toast } from "@/hooks/use-toast";
@@ -91,8 +91,21 @@ const Dashboard = () => {
     setDrawerOpen(false);
     setSelectedTray("");
   };
+  const handleLogout = () => {
+    toast({
+      title: "Logged Out",
+      description: "You have been logged out successfully."
+    });
+    navigate("/login");
+  };
   return <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/20 p-4 md:p-8">
       <div className="max-w-6xl mx-auto">
+        <div className="fixed top-4 right-4 z-50 animate-fade-in">
+          <Button onClick={handleLogout} variant="outline" size="icon" className="rounded-full shadow-lg">
+            <LogOut className="h-5 w-5" />
+          </Button>
+        </div>
+        
         <div className="text-center mb-4 animate-fade-in">
           <h1 className="md:text-4xl font-bold text-foreground mb-1 text-lg">Leapmile Systems</h1>
           <p className="text-sm text-muted-foreground">Select a system to control</p>
