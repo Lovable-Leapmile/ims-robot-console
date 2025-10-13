@@ -71,10 +71,9 @@ const Stations = () => {
             onClick={() => navigate("/dashboard")}
             variant="ghost"
             className="mr-2 hover:bg-primary/20 p-1.5"
-            size="sm"
+            size="icon"
           >
-            <ArrowLeft className="w-3.5 h-3.5 mr-1" />
-            Back
+            <ArrowLeft className="w-4 h-4" />
           </Button>
           <div>
             <h1 className="text-xl md:text-2xl font-bold text-foreground mb-0.5">
@@ -84,7 +83,7 @@ const Stations = () => {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
           {stations.map((station, index) => (
             <div
               key={station.id}
