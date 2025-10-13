@@ -1,67 +1,60 @@
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Cpu, Boxes, DoorOpen, MoveVertical, Lock, Cuboid } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import StationCard from "@/components/StationCard";
+import { useAuth } from "@/contexts/AuthContext";
+import { useEffect, useState } from "react";
+import { useToast } from "@/hooks/use-toast";
 
-const stations = [
-  {
-    id: "amr",
-    name: "AMR",
-    icon: Cpu,
-    description: "Retrieval & Storage Demo Zone",
-    details: "Autonomous Mobile Robots for material transport and warehouse automation",
-    trayId: "TID-1000100",
-    trayParts: ["Motor Assembly", "Control Board", "Battery Pack"],
-  },
-  {
-    id: "scara",
-    name: "SCARA",
-    icon: Boxes,
-    description: "Pick & Place Operations",
-    details: "High-speed articulated robot arm for precise assembly and sorting tasks",
-    trayId: "TID-1000101",
-    trayParts: ["Gripper Unit", "Servo Motor", "End Effector"],
-  },
-  {
-    id: "bay-door",
-    name: "BAY DOOR",
-    icon: DoorOpen,
-    description: "Automated Access Control",
-    details: "Smart bay door system with integrated sensors and remote operation",
-    trayId: "TID-1000102",
-    trayParts: ["Sensor Module", "Door Controller", "Safety Lock"],
-  },
-  {
-    id: "scissor-lift",
-    name: "SCISSOR LIFT",
-    icon: MoveVertical,
-    description: "Vertical Material Handling",
-    details: "Electric scissor lift platform for efficient vertical transportation",
-    trayId: "TID-1000103",
-    trayParts: ["Hydraulic Pump", "Platform Base", "Safety Rails"],
-  },
-  {
-    id: "locker",
-    name: "LOCKER",
-    icon: Lock,
-    description: "Smart Storage Solutions",
-    details: "Automated locker system with electronic access control and monitoring",
-    trayId: "TID-1000104",
-    trayParts: ["Lock Mechanism", "RFID Reader", "Access Panel"],
-  },
-  {
-    id: "conveyor",
-    name: "CONVEYOR",
-    icon: Cuboid,
-    description: "Belt Conveyor System",
-    details: "Automated material flow with sensor-based sorting and tracking",
-    trayId: "TID-1000105",
-    trayParts: ["Belt Drive", "Roller Set", "Tracking Sensor"],
-  },
-];
+interface ReadyTray {
+  id: number;
+  tray_id: string;
+  station_name: string;
+  tags: string[];
+  task_status: string;
+  station_slot_id: string;
+}
 
 const Stations = () => {
   const navigate = useNavigate();
+  const { token } = useAuth();
+  const { toast } = useToast();
+  const [readyTrays, setReadyTrays] = useState<ReadyTray[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchReadyTrays();
+  }, [token]);
+
+  const fetchReadyTrays = async () => {
+    if (!token) return;
+    
+    setLoading(true);
+    try {
+      const response = await fetch(
+        'https://robotmanagerv1test.qikpod.com/robotmanager/is_tray_ready',
+        {
+          headers: {
+            'accept': 'application/json',
+            'Authorization': `Bearer ${token}`
+          }
+        }
+      );
+      
+      const data = await response.json();
+      if (data.status === 'success' && data.records) {
+        setReadyTrays(data.records);
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to fetch ready trays",
+        variant: "destructive"
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/20 p-4 md:p-8">
@@ -83,17 +76,30 @@ const Stations = () => {
           </div>
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-          {stations.map((station, index) => (
-            <div
-              key={station.id}
-              className="animate-scale-in"
-              style={{ animationDelay: `${index * 0.1}s` }}
-            >
-              <StationCard {...station} />
-            </div>
-          ))}
-        </div>
+        {loading ? (
+          <div className="text-center py-8 text-muted-foreground">
+            Loading ready trays...
+          </div>
+        ) : readyTrays.length === 0 ? (
+          <div className="text-center py-8 text-muted-foreground">
+            No ready trays available
+          </div>
+        ) : (
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+            {readyTrays.map((tray, index) => (
+              <div
+                key={tray.id}
+                className="animate-scale-in"
+                style={{ animationDelay: `${index * 0.1}s` }}
+              >
+                <StationCard 
+                  tray={tray}
+                  onReleaseSuccess={fetchReadyTrays}
+                />
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );
