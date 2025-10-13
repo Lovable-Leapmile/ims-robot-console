@@ -1,11 +1,20 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Cpu, Boxes, DoorOpen, MoveVertical, Lock, Cuboid, X, LogOut } from "lucide-react";
+import { Cpu, Boxes, DoorOpen, MoveVertical, Lock, Cuboid, X, LogOut, Loader2 } from "lucide-react";
 import FeatureCard from "@/components/FeatureCard";
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from "@/components/ui/drawer";
 import { toast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
+
+interface Tray {
+  id: number;
+  tray_id: string;
+  tray_status: string;
+  tray_height: number;
+  tray_weight: number;
+  tray_divider: number;
+}
 const features = [{
   id: "amr",
   name: "AMR",
@@ -43,47 +52,59 @@ const features = [{
   description: "Belt Conveyor System",
   gradient: "from-accent to-secondary"
 }];
-const mockTrays = [{
-  id: "TID-1000100",
-  weight: "25 kg",
-  division: "A1",
-  height: "120 cm"
-}, {
-  id: "TID-1000101",
-  weight: "30 kg",
-  division: "A2",
-  height: "150 cm"
-}, {
-  id: "TID-1000102",
-  weight: "22 kg",
-  division: "B1",
-  height: "110 cm"
-}, {
-  id: "TID-1000103",
-  weight: "28 kg",
-  division: "B2",
-  height: "135 cm"
-}, {
-  id: "TID-1000104",
-  weight: "26 kg",
-  division: "C1",
-  height: "125 cm"
-}, {
-  id: "TID-1000105",
-  weight: "32 kg",
-  division: "C2",
-  height: "140 cm"
-}];
 const Dashboard = () => {
   const navigate = useNavigate();
-  const { logout } = useAuth();
+  const { logout, token } = useAuth();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [selectedSystem, setSelectedSystem] = useState<string>("");
   const [selectedTray, setSelectedTray] = useState<string>("");
+  const [trays, setTrays] = useState<Tray[]>([]);
+  const [loading, setLoading] = useState(false);
+
+  const fetchTrays = async () => {
+    if (!token) return;
+    
+    setLoading(true);
+    try {
+      const response = await fetch(
+        'https://robotmanagerv1test.qikpod.com/robotmanager/trays?order_by_field=updated_at&order_by_type=DESC',
+        {
+          headers: {
+            'accept': 'application/json',
+            'Authorization': `Bearer ${token}`
+          }
+        }
+      );
+      
+      const data = await response.json();
+      if (data.status === 'success') {
+        setTrays(data.records);
+      } else {
+        toast({
+          title: "Error",
+          description: "Failed to fetch trays",
+          variant: "destructive"
+        });
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to connect to server",
+        variant: "destructive"
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleSystemClick = (systemName: string) => {
     setSelectedSystem(systemName);
     setSelectedTray("");
     setDrawerOpen(true);
+    
+    if (systemName !== "SCARA") {
+      fetchTrays();
+    }
   };
   const handleRequestTray = () => {
     toast({
@@ -133,26 +154,55 @@ const Dashboard = () => {
             
             <div className="flex flex-col h-full p-4 overflow-hidden">
               <div className="flex-1 overflow-y-auto space-y-3 mb-4">
-                {mockTrays.map(tray => <button key={tray.id} onClick={() => setSelectedTray(tray.id)} className={`w-full p-4 rounded-lg border-2 text-left transition-all ${selectedTray === tray.id ? "border-accent bg-accent/10" : "border-border bg-card hover:border-accent/50"}`}>
-                    <div className="font-bold text-foreground mb-2">{tray.id}</div>
-                    <div className="grid grid-cols-3 gap-2 text-sm text-muted-foreground">
-                      <div>
-                        <div className="text-xs opacity-70">Weight</div>
-                        <div className="font-medium text-foreground">{tray.weight}</div>
+                {selectedSystem === "SCARA" ? (
+                  <div className="text-center py-8 text-muted-foreground">
+                    <p>Item IDs feature coming soon</p>
+                    <p className="text-sm mt-2">Please provide the items API endpoint</p>
+                  </div>
+                ) : loading ? (
+                  <div className="flex items-center justify-center py-8">
+                    <Loader2 className="h-8 w-8 animate-spin text-accent" />
+                  </div>
+                ) : trays.length === 0 ? (
+                  <div className="text-center py-8 text-muted-foreground">
+                    <p>No trays available</p>
+                  </div>
+                ) : (
+                  trays.map(tray => (
+                    <button 
+                      key={tray.id} 
+                      onClick={() => setSelectedTray(tray.tray_id)} 
+                      className={`w-full p-4 rounded-lg border-2 text-left transition-all ${
+                        selectedTray === tray.tray_id 
+                          ? "border-accent bg-accent/10" 
+                          : "border-border bg-card hover:border-accent/50"
+                      }`}
+                    >
+                      <div className="font-bold text-foreground mb-2">{tray.tray_id}</div>
+                      <div className="grid grid-cols-3 gap-2 text-sm text-muted-foreground">
+                        <div>
+                          <div className="text-xs opacity-70">Weight</div>
+                          <div className="font-medium text-foreground">{tray.tray_weight} kg</div>
+                        </div>
+                        <div>
+                          <div className="text-xs opacity-70">Height</div>
+                          <div className="font-medium text-foreground">{tray.tray_height} cm</div>
+                        </div>
+                        <div>
+                          <div className="text-xs opacity-70">Status</div>
+                          <div className="font-medium text-foreground">{tray.tray_status}</div>
+                        </div>
                       </div>
-                      <div>
-                        <div className="text-xs opacity-70">Division</div>
-                        <div className="font-medium text-foreground">{tray.division}</div>
-                      </div>
-                      <div>
-                        <div className="text-xs opacity-70">Height</div>
-                        <div className="font-medium text-foreground">{tray.height}</div>
-                      </div>
-                    </div>
-                  </button>)}
+                    </button>
+                  ))
+                )}
               </div>
               
-              <Button onClick={handleRequestTray} disabled={!selectedTray} className="w-full py-6 text-lg font-semibold">
+              <Button 
+                onClick={handleRequestTray} 
+                disabled={!selectedTray || selectedSystem === "SCARA"} 
+                className="w-full py-6 text-lg font-semibold"
+              >
                 {selectedTray ? `Request Tray ${selectedTray}` : "Select a Tray"}
               </Button>
             </div>
