@@ -24,6 +24,14 @@ const Stations = () => {
 
   useEffect(() => {
     fetchReadyTrays();
+    
+    // Set up auto-refresh every 2 seconds
+    const intervalId = setInterval(() => {
+      fetchReadyTrays();
+    }, 2000);
+    
+    // Cleanup interval on unmount
+    return () => clearInterval(intervalId);
   }, [token]);
 
   const fetchReadyTrays = async () => {
