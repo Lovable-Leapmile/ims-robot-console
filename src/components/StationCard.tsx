@@ -4,7 +4,6 @@ import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import { useState } from "react";
 import { Package } from "lucide-react";
-
 interface ReadyTray {
   id: number;
   tray_id: string;
@@ -13,34 +12,33 @@ interface ReadyTray {
   task_status: string;
   station_slot_id: string;
 }
-
 interface StationCardProps {
   tray: ReadyTray;
   onReleaseSuccess: () => void;
 }
-
-const StationCard = ({ tray, onReleaseSuccess }: StationCardProps) => {
-  const { toast } = useToast();
-  const { token } = useAuth();
+const StationCard = ({
+  tray,
+  onReleaseSuccess
+}: StationCardProps) => {
+  const {
+    toast
+  } = useToast();
+  const {
+    token
+  } = useAuth();
   const [loading, setLoading] = useState(false);
-
   const handleRelease = async () => {
     if (!token) return;
-    
     setLoading(true);
     try {
       const tagsParams = tray.tags.map(tag => `tags=${tag}`).join('&');
-      const response = await fetch(
-        `https://robotmanagerv1test.qikpod.com/robotmanager/release_tray?tray_id=${tray.tray_id}&${tagsParams}`,
-        {
-          method: 'PATCH',
-          headers: {
-            'accept': 'application/json',
-            'Authorization': `Bearer ${token}`
-          }
+      const response = await fetch(`https://robotmanagerv1test.qikpod.com/robotmanager/release_tray?tray_id=${tray.tray_id}&${tagsParams}`, {
+        method: 'PATCH',
+        headers: {
+          'accept': 'application/json',
+          'Authorization': `Bearer ${token}`
         }
-      );
-      
+      });
       const data = await response.json();
       if (data.status === 'success') {
         toast({
@@ -65,8 +63,7 @@ const StationCard = ({ tray, onReleaseSuccess }: StationCardProps) => {
       setLoading(false);
     }
   };
-  return (
-    <Card className="group relative overflow-hidden bg-card/50 backdrop-blur-xl border-border hover:border-accent/50 transition-all duration-300">
+  return <Card className="group relative overflow-hidden bg-card/50 backdrop-blur-xl border-border hover:border-accent/50 transition-all duration-300">
       <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-accent/10 opacity-0 group-hover:opacity-100 transition-opacity" />
       
       <div className="relative p-3 space-y-2">
@@ -84,23 +81,16 @@ const StationCard = ({ tray, onReleaseSuccess }: StationCardProps) => {
         <div className="bg-background/50 rounded-lg p-2 text-center space-y-1">
           <p className="text-xs font-semibold text-foreground">{tray.station_slot_id}</p>
           <div className="flex flex-wrap gap-1 justify-center">
-            {tray.tags.map((tag) => (
-              <span key={tag} className="text-xs px-2 py-0.5 rounded-full bg-primary/20 text-primary">
+            {tray.tags.map(tag => <span key={tag} className="text-xs px-2 py-0.5 rounded-full bg-primary/20 text-violet-200">
                 {tag}
-              </span>
-            ))}
+              </span>)}
           </div>
         </div>
         
-        <Button 
-          onClick={handleRelease} 
-          disabled={loading}
-          className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold text-xs py-1.5 transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50"
-        >
+        <Button onClick={handleRelease} disabled={loading} className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold text-xs py-1.5 transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50">
           {loading ? "Releasing..." : "Release"}
         </Button>
       </div>
-    </Card>
-  );
+    </Card>;
 };
 export default StationCard;
