@@ -120,7 +120,7 @@ const Dashboard = () => {
       setLoading(true);
       try {
         const response = await fetch(
-          `https://robotmanagerv1test.qikpod.com/robotmanager/retrieve_tray?tray_id=${selectedTray}&required_tags=station&required_tags=scara`,
+          `https://robotmanagerv1test.qikpod.com/robotmanager/retrieve_tray?tray_id=Tray2&required_tags=station&required_tags=scara`,
           {
             method: 'POST',
             headers: {
