@@ -23,21 +23,25 @@ const Stations = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchReadyTrays();
+    fetchReadyTrays(true);
     
     // Set up auto-refresh every 2 seconds
     const intervalId = setInterval(() => {
-      fetchReadyTrays();
+      fetchReadyTrays(false);
     }, 2000);
     
     // Cleanup interval on unmount
     return () => clearInterval(intervalId);
   }, [token]);
 
-  const fetchReadyTrays = async () => {
+  const fetchReadyTrays = async (isInitialLoad = false) => {
     if (!token) return;
     
-    setLoading(true);
+    // Only show loading state on initial load
+    if (isInitialLoad) {
+      setLoading(true);
+    }
+    
     try {
       const response = await fetch(
         'https://robotmanagerv1test.qikpod.com/robotmanager/is_tray_ready',
@@ -54,13 +58,18 @@ const Stations = () => {
         setReadyTrays(data.records);
       }
     } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to fetch ready trays",
-        variant: "destructive"
-      });
+      // Only show toast on initial load to avoid spam
+      if (isInitialLoad) {
+        toast({
+          title: "Error",
+          description: "Failed to fetch ready trays",
+          variant: "destructive"
+        });
+      }
     } finally {
-      setLoading(false);
+      if (isInitialLoad) {
+        setLoading(false);
+      }
     }
   };
 
