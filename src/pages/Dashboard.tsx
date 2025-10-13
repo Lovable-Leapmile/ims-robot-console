@@ -54,14 +54,14 @@ const Dashboard = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/20 p-4 md:p-8">
       <div className="max-w-6xl mx-auto">
-        <div className="text-center mb-8 animate-fade-in">
-          <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-2">
+        <div className="text-center mb-4 animate-fade-in">
+          <h1 className="text-2xl md:text-4xl font-bold text-foreground mb-1">
             IMS Warehouse Control
           </h1>
-          <p className="text-muted-foreground">Select a system to control</p>
+          <p className="text-sm text-muted-foreground">Select a system to control</p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-16">
           {features.map((feature, index) => (
             <div
               key={feature.id}
@@ -73,10 +73,10 @@ const Dashboard = () => {
           ))}
         </div>
 
-        <div className="fixed bottom-8 right-8 animate-fade-in" style={{ animationDelay: "0.6s" }}>
+        <div className="fixed bottom-4 right-4 animate-fade-in" style={{ animationDelay: "0.6s" }}>
           <Button
             onClick={() => navigate("/stations")}
-            className="bg-accent hover:bg-accent/90 text-accent-foreground font-semibold px-8 py-6 rounded-full shadow-2xl transition-all hover:scale-105 active:scale-95"
+            className="bg-accent hover:bg-accent/90 text-accent-foreground font-semibold px-6 py-4 rounded-full shadow-2xl transition-all hover:scale-105 active:scale-95"
           >
             Stations
           </Button>

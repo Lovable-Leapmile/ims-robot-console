@@ -54,20 +54,21 @@ const Stations = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/20 p-4 md:p-8">
       <div className="max-w-6xl mx-auto">
-        <div className="flex items-center mb-8 animate-fade-in">
+        <div className="flex items-center mb-4 animate-fade-in">
           <Button
             onClick={() => navigate("/dashboard")}
             variant="ghost"
-            className="mr-4 hover:bg-primary/20"
+            className="mr-2 hover:bg-primary/20 p-2"
+            size="sm"
           >
-            <ArrowLeft className="w-5 h-5 mr-2" />
+            <ArrowLeft className="w-4 h-4 mr-1" />
             Back
           </Button>
           <div>
-            <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-1">
+            <h1 className="text-2xl md:text-4xl font-bold text-foreground mb-1">
               Robotic Stations
             </h1>
-            <p className="text-muted-foreground">Control and monitor warehouse automation</p>
+            <p className="text-sm text-muted-foreground">Control and monitor warehouse automation</p>
           </div>
         </div>
 
