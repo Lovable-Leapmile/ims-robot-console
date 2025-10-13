@@ -7,11 +7,15 @@ interface FeatureCardProps {
   icon: LucideIcon;
   description: string;
   gradient: string;
+  onClick?: () => void;
 }
 
-const FeatureCard = ({ name, icon: Icon, description, gradient }: FeatureCardProps) => {
+const FeatureCard = ({ name, icon: Icon, description, gradient, onClick }: FeatureCardProps) => {
   return (
-    <Card className="group relative overflow-hidden bg-card/50 backdrop-blur-xl border-border hover:border-accent/50 transition-all duration-300 cursor-pointer hover:scale-105 active:scale-95 h-full">
+    <Card 
+      onClick={onClick}
+      className="group relative overflow-hidden bg-card/50 backdrop-blur-xl border-border hover:border-accent/50 transition-all duration-300 cursor-pointer hover:scale-105 active:scale-95 h-full"
+    >
       <div className={`absolute inset-0 bg-gradient-to-br ${gradient} opacity-10 group-hover:opacity-20 transition-opacity`} />
       
       <div className="relative p-3 md:p-4 flex flex-col items-center text-center space-y-2">
