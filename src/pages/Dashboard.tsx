@@ -5,6 +5,7 @@ import { Cpu, Boxes, DoorOpen, MoveVertical, Lock, Cuboid, X, LogOut } from "luc
 import FeatureCard from "@/components/FeatureCard";
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from "@/components/ui/drawer";
 import { toast } from "@/hooks/use-toast";
+import { useAuth } from "@/contexts/AuthContext";
 const features = [{
   id: "amr",
   name: "AMR",
@@ -75,6 +76,7 @@ const mockTrays = [{
 }];
 const Dashboard = () => {
   const navigate = useNavigate();
+  const { logout } = useAuth();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [selectedSystem, setSelectedSystem] = useState<string>("");
   const [selectedTray, setSelectedTray] = useState<string>("");
@@ -92,6 +94,7 @@ const Dashboard = () => {
     setSelectedTray("");
   };
   const handleLogout = () => {
+    logout();
     toast({
       title: "Logged Out",
       description: "You have been logged out successfully."
