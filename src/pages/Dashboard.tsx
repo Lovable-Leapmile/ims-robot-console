@@ -116,8 +116,9 @@ const Dashboard = () => {
   const handleRequestTray = async () => {
     if (!token || !selectedTray) return;
 
+    setLoading(true);
+
     if (selectedSystem === "SCARA") {
-      setLoading(true);
       try {
         const response = await fetch(
           `https://robotmanagerv1test.qikpod.com/robotmanager/retrieve_tray?tray_id=Tray2&required_tags=station&required_tags=scara`,
@@ -153,10 +154,122 @@ const Dashboard = () => {
         setLoading(false);
       }
     } else {
-      toast({
-        title: "Tray Request Sent",
-        description: `Request for ${selectedTray} via ${selectedSystem} has been submitted.`
-      });
+      // Step 1: Check if tray is in progress
+      try {
+        const inProgressResponse = await fetch(
+          `https://robotmanagerv1test.qikpod.com/robotmanager/task?tray_id=${selectedTray}&task_status=inprogress&order_by_field=updated_at&order_by_type=ASC`,
+          {
+            headers: {
+              'accept': 'application/json',
+              'Authorization': `Bearer ${token}`
+            }
+          }
+        );
+        
+        const inProgressData = await inProgressResponse.json();
+        if (inProgressData.status === 'success' && inProgressData.records?.length > 0) {
+          toast({
+            title: "Tray In Progress",
+            description: `Tray ${selectedTray} is currently in progress.`
+          });
+          setLoading(false);
+          setDrawerOpen(false);
+          setSelectedTray("");
+          return;
+        }
+      } catch (error) {
+        console.log("In progress check failed, continuing...");
+      }
+
+      // Step 2: Check if tray is pending
+      try {
+        const pendingResponse = await fetch(
+          `https://robotmanagerv1test.qikpod.com/robotmanager/task?tray_id=${selectedTray}&task_status=pending&order_by_field=updated_at&order_by_type=ASC`,
+          {
+            headers: {
+              'accept': 'application/json',
+              'Authorization': `Bearer ${token}`
+            }
+          }
+        );
+        
+        const pendingData = await pendingResponse.json();
+        if (pendingData.status === 'success' && pendingData.records?.length > 0) {
+          toast({
+            title: "Tray Pending",
+            description: `Tray ${selectedTray} is pending.`
+          });
+          setLoading(false);
+          setDrawerOpen(false);
+          setSelectedTray("");
+          return;
+        }
+      } catch (error) {
+        console.log("Pending check failed, continuing...");
+      }
+
+      // Step 3: Check if tray is ready
+      try {
+        const readyResponse = await fetch(
+          `https://robotmanagerv1test.qikpod.com/robotmanager/is_tray_ready?tray_id=${selectedTray}`,
+          {
+            headers: {
+              'accept': 'application/json',
+              'Authorization': `Bearer ${token}`
+            }
+          }
+        );
+        
+        const readyData = await readyResponse.json();
+        if (readyData.status === 'success') {
+          toast({
+            title: "Tray Ready",
+            description: `Tray ${selectedTray} is already at the station.`
+          });
+          setLoading(false);
+          setDrawerOpen(false);
+          setSelectedTray("");
+          return;
+        }
+      } catch (error) {
+        console.log("Ready check failed, continuing...");
+      }
+
+      // Step 4: Retrieve tray
+      try {
+        const response = await fetch(
+          `https://robotmanagerv1test.qikpod.com/robotmanager/retrieve_tray?tray_id=${selectedTray}&required_tags=station&required_tags=${selectedSystem}`,
+          {
+            method: 'POST',
+            headers: {
+              'accept': 'application/json',
+              'Authorization': `Bearer ${token}`
+            }
+          }
+        );
+        
+        const data = await response.json();
+        if (data.status === 'success') {
+          toast({
+            title: "Tray Retrieved",
+            description: `Tray ${selectedTray} retrieval initiated via ${selectedSystem}.`
+          });
+        } else {
+          toast({
+            title: "Error",
+            description: "Failed to retrieve tray",
+            variant: "destructive"
+          });
+        }
+      } catch (error) {
+        toast({
+          title: "Error",
+          description: "Failed to connect to server",
+          variant: "destructive"
+        });
+      } finally {
+        setLoading(false);
+      }
     }
     
     setDrawerOpen(false);
