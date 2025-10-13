@@ -67,7 +67,7 @@ const Dashboard = () => {
     setLoading(true);
     try {
       const response = await fetch(
-        'https://robotmanagerv1test.qikpod.com/robotmanager/trays?order_by_field=updated_at&order_by_type=DESC',
+        'https://robotmanagerv1test.qikpod.com/robotmanager/trays?tray_status=active&order_by_field=updated_at&order_by_type=DESC',
         {
           headers: {
             'accept': 'application/json',
@@ -102,15 +102,63 @@ const Dashboard = () => {
     setSelectedTray("");
     setDrawerOpen(true);
     
-    if (systemName !== "SCARA") {
+    if (systemName === "SCARA") {
+      // Show dummy items for SCARA
+      setTrays([
+        { id: 1, tray_id: "Item001", tray_status: "available", tray_height: 50, tray_weight: 2, tray_divider: 1 },
+        { id: 2, tray_id: "Item002", tray_status: "available", tray_height: 75, tray_weight: 3, tray_divider: 1 },
+        { id: 3, tray_id: "Item003", tray_status: "available", tray_height: 60, tray_weight: 2.5, tray_divider: 1 },
+      ]);
+    } else {
       fetchTrays();
     }
   };
-  const handleRequestTray = () => {
-    toast({
-      title: "Tray Request Sent",
-      description: `Request for ${selectedTray} via ${selectedSystem} has been submitted.`
-    });
+  const handleRequestTray = async () => {
+    if (!token || !selectedTray) return;
+
+    if (selectedSystem === "SCARA") {
+      setLoading(true);
+      try {
+        const response = await fetch(
+          `https://robotmanagerv1test.qikpod.com/robotmanager/retrieve_tray?tray_id=${selectedTray}&required_tags=station&required_tags=scara`,
+          {
+            method: 'POST',
+            headers: {
+              'accept': 'application/json',
+              'Authorization': `Bearer ${token}`
+            }
+          }
+        );
+        
+        const data = await response.json();
+        if (data.status === 'success') {
+          toast({
+            title: "Item Retrieved",
+            description: `Item ${selectedTray} retrieved successfully via SCARA.`
+          });
+        } else {
+          toast({
+            title: "Error",
+            description: "Failed to retrieve item",
+            variant: "destructive"
+          });
+        }
+      } catch (error) {
+        toast({
+          title: "Error",
+          description: "Failed to connect to server",
+          variant: "destructive"
+        });
+      } finally {
+        setLoading(false);
+      }
+    } else {
+      toast({
+        title: "Tray Request Sent",
+        description: `Request for ${selectedTray} via ${selectedSystem} has been submitted.`
+      });
+    }
+    
     setDrawerOpen(false);
     setSelectedTray("");
   };
@@ -154,12 +202,7 @@ const Dashboard = () => {
             
             <div className="flex flex-col h-full p-4 overflow-hidden">
               <div className="flex-1 overflow-y-auto space-y-3 mb-4">
-                {selectedSystem === "SCARA" ? (
-                  <div className="text-center py-8 text-muted-foreground">
-                    <p>Item IDs feature coming soon</p>
-                    <p className="text-sm mt-2">Please provide the items API endpoint</p>
-                  </div>
-                ) : loading ? (
+                {loading ? (
                   <div className="flex items-center justify-center py-8">
                     <Loader2 className="h-8 w-8 animate-spin text-accent" />
                   </div>
@@ -178,7 +221,9 @@ const Dashboard = () => {
                           : "border-border bg-card hover:border-accent/50"
                       }`}
                     >
-                      <div className="font-bold text-foreground mb-2">{tray.tray_id}</div>
+                      <div className="font-bold text-foreground mb-2">
+                        {selectedSystem === "SCARA" ? `Item: ${tray.tray_id}` : tray.tray_id}
+                      </div>
                       <div className="grid grid-cols-3 gap-2 text-sm text-muted-foreground">
                         <div>
                           <div className="text-xs opacity-70">Weight</div>
@@ -200,10 +245,19 @@ const Dashboard = () => {
               
               <Button 
                 onClick={handleRequestTray} 
-                disabled={!selectedTray || selectedSystem === "SCARA"} 
+                disabled={!selectedTray || loading} 
                 className="w-full py-6 text-lg font-semibold"
               >
-                {selectedTray ? `Request Tray ${selectedTray}` : "Select a Tray"}
+                {loading ? (
+                  <>
+                    <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                    Processing...
+                  </>
+                ) : selectedTray ? (
+                  selectedSystem === "SCARA" ? `Retrieve Item ${selectedTray}` : `Request Tray ${selectedTray}`
+                ) : (
+                  selectedSystem === "SCARA" ? "Select an Item" : "Select a Tray"
+                )}
               </Button>
             </div>
           </DrawerContent>
