@@ -10,6 +10,8 @@ const stations = [
     icon: Cpu,
     description: "Retrieval & Storage Demo Zone",
     details: "Autonomous Mobile Robots for material transport and warehouse automation",
+    trayId: "TID-1000100",
+    trayParts: ["Motor Assembly", "Control Board", "Battery Pack"],
   },
   {
     id: "scara",
@@ -17,6 +19,8 @@ const stations = [
     icon: Boxes,
     description: "Pick & Place Operations",
     details: "High-speed articulated robot arm for precise assembly and sorting tasks",
+    trayId: "TID-1000101",
+    trayParts: ["Gripper Unit", "Servo Motor", "End Effector"],
   },
   {
     id: "bay-door",
@@ -24,6 +28,8 @@ const stations = [
     icon: DoorOpen,
     description: "Automated Access Control",
     details: "Smart bay door system with integrated sensors and remote operation",
+    trayId: "TID-1000102",
+    trayParts: ["Sensor Module", "Door Controller", "Safety Lock"],
   },
   {
     id: "scissor-lift",
@@ -31,6 +37,8 @@ const stations = [
     icon: MoveVertical,
     description: "Vertical Material Handling",
     details: "Electric scissor lift platform for efficient vertical transportation",
+    trayId: "TID-1000103",
+    trayParts: ["Hydraulic Pump", "Platform Base", "Safety Rails"],
   },
   {
     id: "locker",
@@ -38,6 +46,8 @@ const stations = [
     icon: Lock,
     description: "Smart Storage Solutions",
     details: "Automated locker system with electronic access control and monitoring",
+    trayId: "TID-1000104",
+    trayParts: ["Lock Mechanism", "RFID Reader", "Access Panel"],
   },
   {
     id: "conveyor",
@@ -45,6 +55,8 @@ const stations = [
     icon: Cuboid,
     description: "Belt Conveyor System",
     details: "Automated material flow with sensor-based sorting and tracking",
+    trayId: "TID-1000105",
+    trayParts: ["Belt Drive", "Roller Set", "Tracking Sensor"],
   },
 ];
 
@@ -54,25 +66,25 @@ const Stations = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/20 p-4 md:p-8">
       <div className="max-w-6xl mx-auto">
-        <div className="flex items-center mb-4 animate-fade-in">
+        <div className="flex items-center mb-3 animate-fade-in">
           <Button
             onClick={() => navigate("/dashboard")}
             variant="ghost"
-            className="mr-2 hover:bg-primary/20 p-2"
+            className="mr-2 hover:bg-primary/20 p-1.5"
             size="sm"
           >
-            <ArrowLeft className="w-4 h-4 mr-1" />
+            <ArrowLeft className="w-3.5 h-3.5 mr-1" />
             Back
           </Button>
           <div>
-            <h1 className="text-2xl md:text-4xl font-bold text-foreground mb-1">
+            <h1 className="text-xl md:text-2xl font-bold text-foreground mb-0.5">
               Robotic Stations
             </h1>
-            <p className="text-sm text-muted-foreground">Control and monitor warehouse automation</p>
+            <p className="text-xs text-muted-foreground">Control and monitor warehouse automation</p>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
           {stations.map((station, index) => (
             <div
               key={station.id}

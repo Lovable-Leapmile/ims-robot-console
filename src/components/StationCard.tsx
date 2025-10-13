@@ -9,15 +9,17 @@ interface StationCardProps {
   icon: LucideIcon;
   description: string;
   details: string;
+  trayId: string;
+  trayParts: string[];
 }
 
-const StationCard = ({ name, icon: Icon, description, details }: StationCardProps) => {
+const StationCard = ({ name, icon: Icon, description, trayId, trayParts }: StationCardProps) => {
   const { toast } = useToast();
 
-  const handleControl = () => {
+  const handleRelease = () => {
     toast({
-      title: `${name} Activated`,
-      description: "Control interface will be available after API integration",
+      title: `${name} Released`,
+      description: `Tray ${trayId} has been released`,
     });
   };
 
@@ -25,27 +27,32 @@ const StationCard = ({ name, icon: Icon, description, details }: StationCardProp
     <Card className="group relative overflow-hidden bg-card/50 backdrop-blur-xl border-border hover:border-accent/50 transition-all duration-300">
       <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-accent/10 opacity-0 group-hover:opacity-100 transition-opacity" />
       
-      <div className="relative p-6 space-y-4">
-        <div className="flex items-start space-x-4">
-          <div className="w-14 h-14 rounded-xl bg-primary/20 flex items-center justify-center group-hover:bg-accent/20 transition-colors flex-shrink-0">
-            <Icon className="w-7 h-7 text-accent" />
+      <div className="relative p-3 space-y-2">
+        <div className="flex items-start space-x-3">
+          <div className="w-10 h-10 rounded-lg bg-primary/20 flex items-center justify-center group-hover:bg-accent/20 transition-colors flex-shrink-0">
+            <Icon className="w-5 h-5 text-accent" />
           </div>
           
           <div className="flex-1">
-            <h3 className="text-2xl font-bold text-foreground mb-1">{name}</h3>
-            <p className="text-sm text-secondary font-medium">{description}</p>
+            <h3 className="text-lg font-bold text-foreground mb-0.5">{name}</h3>
+            <p className="text-xs text-secondary font-medium">{description}</p>
           </div>
         </div>
         
-        <p className="text-muted-foreground text-sm leading-relaxed">
-          {details}
-        </p>
+        <div className="space-y-1.5 bg-background/50 rounded-lg p-2">
+          <p className="text-xs font-semibold text-foreground">Tray: {trayId}</p>
+          <div className="space-y-0.5">
+            {trayParts.map((part, index) => (
+              <p key={index} className="text-xs text-muted-foreground">• {part}</p>
+            ))}
+          </div>
+        </div>
         
         <Button
-          onClick={handleControl}
-          className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold transition-all hover:scale-[1.02] active:scale-[0.98]"
+          onClick={handleRelease}
+          className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold text-sm py-2 transition-all hover:scale-[1.02] active:scale-[0.98]"
         >
-          Control
+          Release
         </Button>
       </div>
     </Card>
