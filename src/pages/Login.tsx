@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Bot, LogIn } from "lucide-react";
+import { LogIn } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 
@@ -67,8 +67,12 @@ const Login = () => {
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/20 flex items-center justify-center p-4">
       <div className="w-full max-w-md animate-fade-in">
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-primary/20 backdrop-blur-sm mb-4 animate-glow">
-            <Bot className="w-10 h-10 text-accent" />
+          <div className="flex justify-center mb-4">
+            <img 
+              src="https://leapmile-website.blr1.cdn.digitaloceanspaces.com/Header&footer/litepurple.png" 
+              alt="IMS Robotics Logo" 
+              className="h-20 w-auto object-contain"
+            />
           </div>
           <h1 className="text-3xl font-bold text-foreground mb-2">IMS Robotics</h1>
           <p className="text-muted-foreground">Warehouse Control System</p>
