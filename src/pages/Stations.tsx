@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import StationCard from "@/components/StationCard";
 import { useAuth } from "@/contexts/AuthContext";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useToast } from "@/hooks/use-toast";
 
 interface ReadyTray {
@@ -21,6 +21,9 @@ const Stations = () => {
   const { toast } = useToast();
   const [readyTrays, setReadyTrays] = useState<ReadyTray[]>([]);
   const [loading, setLoading] = useState(true);
+  const processedTraysRef = useRef<Set<string>>(new Set());
+  const currentItemIndexRef = useRef<number>(0);
+  const trayItemMapRef = useRef<Map<string, string>>(new Map());
 
   useEffect(() => {
     fetchReadyTrays(true);
@@ -33,6 +36,33 @@ const Stations = () => {
     // Cleanup interval on unmount
     return () => clearInterval(intervalId);
   }, [token]);
+
+  const publishScaraItem = async (tray: ReadyTray) => {
+    const itemIds = ['1', '2', '3', '4', '5', '6'];
+    const itemId = itemIds[currentItemIndexRef.current];
+    
+    currentItemIndexRef.current = (currentItemIndexRef.current + 1) % itemIds.length;
+    trayItemMapRef.current.set(tray.tray_id, itemId);
+    
+    try {
+      await fetch('https://staging.qikpod.com/pubsub/publish?topic=pick_item_id', {
+        method: 'POST',
+        headers: {
+          'accept': 'application/json',
+          'Authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhY2wiOiJhZG1pbiIsImV4cCI6MTkwMDY2MDExOX0.m9Rrmvbo22sJpWgTVynJLDIXFxOfym48F-kGy-wSKqQ',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          item_id: itemId,
+          action: "outbound",
+          tray_id: tray.tray_id,
+          station_name: tray.station_name
+        })
+      });
+    } catch (error) {
+      console.error('Failed to publish scara item:', error);
+    }
+  };
 
   const fetchReadyTrays = async (isInitialLoad = false) => {
     if (!token) return;
@@ -56,6 +86,15 @@ const Stations = () => {
       const data = await response.json();
       if (data.status === 'success' && data.records) {
         setReadyTrays(data.records);
+        
+        // Check for new scara-tagged trays
+        data.records.forEach((tray: ReadyTray) => {
+          const hasScaraTag = tray.tags.some(tag => tag.toLowerCase().includes('scara'));
+          if (hasScaraTag && !processedTraysRef.current.has(tray.tray_id)) {
+            processedTraysRef.current.add(tray.tray_id);
+            publishScaraItem(tray);
+          }
+        });
       }
     } catch (error) {
       // Only show toast on initial load to avoid spam
