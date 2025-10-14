@@ -14,11 +14,11 @@ interface ReadyTray {
 }
 interface StationCardProps {
   tray: ReadyTray;
-  onReleaseSuccess: () => void;
+  onRemoveTray: (trayId: string) => void;
 }
 const StationCard = ({
   tray,
-  onReleaseSuccess
+  onRemoveTray
 }: StationCardProps) => {
   const {
     toast
@@ -29,7 +29,11 @@ const StationCard = ({
   const [loading, setLoading] = useState(false);
   const handleRelease = async () => {
     if (!token) return;
-    setLoading(true);
+    
+    // Remove from UI immediately
+    onRemoveTray(tray.tray_id);
+    
+    // Continue with API call in background
     try {
       const tagsParams = tray.tags.map(tag => `tags=${tag}`).join('&');
       const response = await fetch(`https://robotmanagerv1test.qikpod.com/robotmanager/release_tray?tray_id=${tray.tray_id}&${tagsParams}`, {
@@ -45,7 +49,6 @@ const StationCard = ({
           title: "Tray Released",
           description: `Tray ${tray.tray_id} from station ${tray.station_name} has been released`
         });
-        onReleaseSuccess();
       } else {
         toast({
           title: "Error",
@@ -59,8 +62,6 @@ const StationCard = ({
         description: "Failed to connect to server",
         variant: "destructive"
       });
-    } finally {
-      setLoading(false);
     }
   };
   return <Card className="group relative overflow-hidden bg-card/50 backdrop-blur-xl border-border hover:border-accent/50 transition-all duration-300">

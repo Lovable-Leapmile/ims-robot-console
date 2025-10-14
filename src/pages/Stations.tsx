@@ -73,6 +73,10 @@ const Stations = () => {
     }
   };
 
+  const handleRemoveTray = (trayId: string) => {
+    setReadyTrays(prevTrays => prevTrays.filter(tray => tray.tray_id !== trayId));
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/20 p-4 md:p-8">
       <div className="max-w-6xl mx-auto">
@@ -111,7 +115,7 @@ const Stations = () => {
               >
                 <StationCard 
                   tray={tray}
-                  onReleaseSuccess={fetchReadyTrays}
+                  onRemoveTray={handleRemoveTray}
                 />
               </div>
             ))}
