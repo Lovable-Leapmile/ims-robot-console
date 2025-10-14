@@ -105,9 +105,12 @@ const Dashboard = () => {
     if (systemName === "SCARA") {
       // Show dummy items for SCARA
       setTrays([
-        { id: 1, tray_id: "Item001", tray_status: "available", tray_height: 50, tray_weight: 2, tray_divider: 1 },
-        { id: 2, tray_id: "Item002", tray_status: "available", tray_height: 75, tray_weight: 3, tray_divider: 1 },
-        { id: 3, tray_id: "Item003", tray_status: "available", tray_height: 60, tray_weight: 2.5, tray_divider: 1 },
+        { id: 1, tray_id: "1", tray_status: "available", tray_height: 50, tray_weight: 2, tray_divider: 1 },
+        { id: 2, tray_id: "2", tray_status: "available", tray_height: 75, tray_weight: 3, tray_divider: 1 },
+        { id: 3, tray_id: "3", tray_status: "available", tray_height: 60, tray_weight: 2.5, tray_divider: 1 },
+        { id: 4, tray_id: "4", tray_status: "available", tray_height: 55, tray_weight: 2.2, tray_divider: 1 },
+        { id: 5, tray_id: "5", tray_status: "available", tray_height: 65, tray_weight: 2.8, tray_divider: 1 },
+        { id: 6, tray_id: "6", tray_status: "available", tray_height: 70, tray_weight: 3.2, tray_divider: 1 },
       ]);
     } else {
       fetchTrays();
