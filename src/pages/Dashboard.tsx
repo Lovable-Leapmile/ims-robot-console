@@ -191,11 +191,11 @@ const Dashboard = () => {
     }
   };
 
-  const handleBayDoorAction = async (action: "open" | "close") => {
+  const handleBayDoorAction = async (action: "open_door" | "close_door") => {
     setLoading(true);
     try {
       const response = await fetch(
-        'https://staging.qikpod.com/pubsub/publish?topic=BAYDOOR',
+        'https://staging.qikpod.com/pubsub/publish?topic=BAY',
         {
           method: 'POST',
           headers: {
@@ -255,7 +255,7 @@ const Dashboard = () => {
     }
   };
 
-  const handleConveyorAction = async (action: "start" | "stop") => {
+  const handleConveyorAction = async (action: "eject" | "inject") => {
     setLoading(true);
     try {
       const response = await fetch(
@@ -570,7 +570,7 @@ const Dashboard = () => {
                   {selectedSystem === "BAY DOOR" && (
                     <div className="flex-1 flex flex-col gap-4 justify-center">
                       <Button 
-                        onClick={() => handleBayDoorAction("open")} 
+                        onClick={() => handleBayDoorAction("open_door")} 
                         disabled={loading}
                         className="w-full py-8 text-xl font-semibold"
                       >
@@ -580,11 +580,11 @@ const Dashboard = () => {
                             Processing...
                           </>
                         ) : (
-                          "Open"
+                          "Open Door"
                         )}
                       </Button>
                       <Button 
-                        onClick={() => handleBayDoorAction("close")} 
+                        onClick={() => handleBayDoorAction("close_door")} 
                         disabled={loading}
                         className="w-full py-8 text-xl font-semibold"
                         variant="secondary"
@@ -595,7 +595,7 @@ const Dashboard = () => {
                             Processing...
                           </>
                         ) : (
-                          "Close"
+                          "Close Door"
                         )}
                       </Button>
                     </div>
@@ -636,7 +636,7 @@ const Dashboard = () => {
                   {selectedSystem === "CONVEYOR" && (
                     <div className="flex-1 flex flex-col gap-4 justify-center">
                       <Button 
-                        onClick={() => handleConveyorAction("start")} 
+                        onClick={() => handleConveyorAction("eject")} 
                         disabled={loading}
                         className="w-full py-8 text-xl font-semibold"
                       >
@@ -646,11 +646,11 @@ const Dashboard = () => {
                             Processing...
                           </>
                         ) : (
-                          "Start"
+                          "Eject Tray"
                         )}
                       </Button>
                       <Button 
-                        onClick={() => handleConveyorAction("stop")} 
+                        onClick={() => handleConveyorAction("inject")} 
                         disabled={loading}
                         className="w-full py-8 text-xl font-semibold"
                         variant="secondary"
@@ -661,7 +661,7 @@ const Dashboard = () => {
                             Processing...
                           </>
                         ) : (
-                          "Stop"
+                          "Inject Tray"
                         )}
                       </Button>
                     </div>
