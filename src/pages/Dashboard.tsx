@@ -195,7 +195,7 @@ const Dashboard = () => {
     setLoading(true);
     try {
       const response = await fetch(
-        'https://staging.qikpod.com/pubsub/publish?topic=BAY',
+        'https://staging.qikpod.com/pubsub/publish?topic=Bay',
         {
           method: 'POST',
           headers: {
@@ -259,7 +259,7 @@ const Dashboard = () => {
     setLoading(true);
     try {
       const response = await fetch(
-        'https://staging.qikpod.com/pubsub/publish?topic=CONVEYOR',
+        'https://staging.qikpod.com/pubsub/publish?topic=Conveyor',
         {
           method: 'POST',
           headers: {
