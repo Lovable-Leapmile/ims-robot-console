@@ -71,6 +71,18 @@ const systemControls = [{
   icon: Lock,
   description: "Locker Control Actions",
   gradient: "from-secondary to-primary"
+}, {
+  id: "conveyor-control",
+  name: "CONVEYOR",
+  icon: Cuboid,
+  description: "Belt Control Actions",
+  gradient: "from-accent to-secondary"
+}, {
+  id: "scissor-lift-control",
+  name: "SCISSOR LIFT",
+  icon: MoveVertical,
+  description: "Lift Control Actions",
+  gradient: "from-primary to-accent"
 }];
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -166,6 +178,134 @@ const Dashboard = () => {
       const data = await response.json();
       toast({
         title: "AMR Action",
+        description: `${action.charAt(0).toUpperCase() + action.slice(1)} action executed successfully.`
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to execute action",
+        variant: "destructive"
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleBayDoorAction = async (action: "open" | "close") => {
+    setLoading(true);
+    try {
+      const response = await fetch(
+        'https://staging.qikpod.com/pubsub/publish?topic=BAYDOOR',
+        {
+          method: 'POST',
+          headers: {
+            'accept': 'application/json',
+            'Authorization': `Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhY2wiOiJhZG1pbiIsImV4cCI6MTkwMDY2MDExOX0.m9Rrmvbo22sJpWgTVynJLDIXFxOfym48F-kGy-wSKqQ`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ action })
+        }
+      );
+      
+      const data = await response.json();
+      toast({
+        title: "Bay Door Action",
+        description: `${action.charAt(0).toUpperCase() + action.slice(1)} action executed successfully.`
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to execute action",
+        variant: "destructive"
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleLockerAction = async (action: "open" | "close") => {
+    setLoading(true);
+    try {
+      const response = await fetch(
+        'https://staging.qikpod.com/pubsub/publish?topic=LOOKER',
+        {
+          method: 'POST',
+          headers: {
+            'accept': 'application/json',
+            'Authorization': `Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhY2wiOiJhZG1pbiIsImV4cCI6MTkwMDY2MDExOX0.m9Rrmvbo22sJpWgTVynJLDIXFxOfym48F-kGy-wSKqQ`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ action })
+        }
+      );
+      
+      const data = await response.json();
+      toast({
+        title: "Locker Action",
+        description: `${action.charAt(0).toUpperCase() + action.slice(1)} action executed successfully.`
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to execute action",
+        variant: "destructive"
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleConveyorAction = async (action: "start" | "stop") => {
+    setLoading(true);
+    try {
+      const response = await fetch(
+        'https://staging.qikpod.com/pubsub/publish?topic=CONVEYOR',
+        {
+          method: 'POST',
+          headers: {
+            'accept': 'application/json',
+            'Authorization': `Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhY2wiOiJhZG1pbiIsImV4cCI6MTkwMDY2MDExOX0.m9Rrmvbo22sJpWgTVynJLDIXFxOfym48F-kGy-wSKqQ`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ action })
+        }
+      );
+      
+      const data = await response.json();
+      toast({
+        title: "Conveyor Action",
+        description: `${action.charAt(0).toUpperCase() + action.slice(1)} action executed successfully.`
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to execute action",
+        variant: "destructive"
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleScissorLiftAction = async (action: "start" | "stop") => {
+    setLoading(true);
+    try {
+      const response = await fetch(
+        'https://staging.qikpod.com/pubsub/publish?topic=SCISSOR_LIFT',
+        {
+          method: 'POST',
+          headers: {
+            'accept': 'application/json',
+            'Authorization': `Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhY2wiOiJhZG1pbiIsImV4cCI6MTkwMDY2MDExOX0.m9Rrmvbo22sJpWgTVynJLDIXFxOfym48F-kGy-wSKqQ`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ action })
+        }
+      );
+      
+      const data = await response.json();
+      toast({
+        title: "Scissor Lift Action",
         description: `${action.charAt(0).toUpperCase() + action.slice(1)} action executed successfully.`
       });
     } catch (error) {
@@ -358,27 +498,27 @@ const Dashboard = () => {
         
         <div className="text-center mb-4 animate-fade-in">
           <h1 className="md:text-4xl font-bold text-foreground mb-1 text-lg">Leapmile Systems</h1>
-          <p className="text-sm text-muted-foreground">Select a system to control</p>
+          <p className="text-sm text-muted-foreground">Direct system controls</p>
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-8">
-          {features.map((feature, index) => <div key={feature.id} className="animate-scale-in" style={{
-          animationDelay: `${index * 0.1}s`
-        }}>
-              <FeatureCard {...feature} onClick={() => handleSystemClick(feature.name)} />
-            </div>)}
-        </div>
-
-        <div className="text-center mb-4 animate-fade-in">
-          <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-1">System Controls</h2>
-          <p className="text-sm text-muted-foreground">Direct system actions</p>
-        </div>
-
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-16">
           {systemControls.map((control, index) => <div key={control.id} className="animate-scale-in" style={{
           animationDelay: `${index * 0.1}s`
         }}>
               <FeatureCard {...control} onClick={() => handleControlClick(control.name)} />
+            </div>)}
+        </div>
+
+        <div className="text-center mb-4 animate-fade-in">
+          <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-1">Select System Control</h2>
+          <p className="text-sm text-muted-foreground">Choose a system to manage trays</p>
+        </div>
+
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-16">
+          {features.map((feature, index) => <div key={feature.id} className="animate-scale-in" style={{
+          animationDelay: `${index * 0.1}s`
+        }}>
+              <FeatureCard {...feature} onClick={() => handleSystemClick(feature.name)} />
             </div>)}
         </div>
 
@@ -428,13 +568,135 @@ const Dashboard = () => {
                     </div>
                   )}
                   {selectedSystem === "BAY DOOR" && (
-                    <div className="flex-1 flex items-center justify-center text-muted-foreground">
-                      <p>Bay Door controls coming soon</p>
+                    <div className="flex-1 flex flex-col gap-4 justify-center">
+                      <Button 
+                        onClick={() => handleBayDoorAction("open")} 
+                        disabled={loading}
+                        className="w-full py-8 text-xl font-semibold"
+                      >
+                        {loading ? (
+                          <>
+                            <Loader2 className="mr-2 h-6 w-6 animate-spin" />
+                            Processing...
+                          </>
+                        ) : (
+                          "Open"
+                        )}
+                      </Button>
+                      <Button 
+                        onClick={() => handleBayDoorAction("close")} 
+                        disabled={loading}
+                        className="w-full py-8 text-xl font-semibold"
+                        variant="secondary"
+                      >
+                        {loading ? (
+                          <>
+                            <Loader2 className="mr-2 h-6 w-6 animate-spin" />
+                            Processing...
+                          </>
+                        ) : (
+                          "Close"
+                        )}
+                      </Button>
                     </div>
                   )}
                   {selectedSystem === "LOCKER" && (
-                    <div className="flex-1 flex items-center justify-center text-muted-foreground">
-                      <p>Locker controls coming soon</p>
+                    <div className="flex-1 flex flex-col gap-4 justify-center">
+                      <Button 
+                        onClick={() => handleLockerAction("open")} 
+                        disabled={loading}
+                        className="w-full py-8 text-xl font-semibold"
+                      >
+                        {loading ? (
+                          <>
+                            <Loader2 className="mr-2 h-6 w-6 animate-spin" />
+                            Processing...
+                          </>
+                        ) : (
+                          "Open"
+                        )}
+                      </Button>
+                      <Button 
+                        onClick={() => handleLockerAction("close")} 
+                        disabled={loading}
+                        className="w-full py-8 text-xl font-semibold"
+                        variant="secondary"
+                      >
+                        {loading ? (
+                          <>
+                            <Loader2 className="mr-2 h-6 w-6 animate-spin" />
+                            Processing...
+                          </>
+                        ) : (
+                          "Close"
+                        )}
+                      </Button>
+                    </div>
+                  )}
+                  {selectedSystem === "CONVEYOR" && (
+                    <div className="flex-1 flex flex-col gap-4 justify-center">
+                      <Button 
+                        onClick={() => handleConveyorAction("start")} 
+                        disabled={loading}
+                        className="w-full py-8 text-xl font-semibold"
+                      >
+                        {loading ? (
+                          <>
+                            <Loader2 className="mr-2 h-6 w-6 animate-spin" />
+                            Processing...
+                          </>
+                        ) : (
+                          "Start"
+                        )}
+                      </Button>
+                      <Button 
+                        onClick={() => handleConveyorAction("stop")} 
+                        disabled={loading}
+                        className="w-full py-8 text-xl font-semibold"
+                        variant="secondary"
+                      >
+                        {loading ? (
+                          <>
+                            <Loader2 className="mr-2 h-6 w-6 animate-spin" />
+                            Processing...
+                          </>
+                        ) : (
+                          "Stop"
+                        )}
+                      </Button>
+                    </div>
+                  )}
+                  {selectedSystem === "SCISSOR LIFT" && (
+                    <div className="flex-1 flex flex-col gap-4 justify-center">
+                      <Button 
+                        onClick={() => handleScissorLiftAction("start")} 
+                        disabled={loading}
+                        className="w-full py-8 text-xl font-semibold"
+                      >
+                        {loading ? (
+                          <>
+                            <Loader2 className="mr-2 h-6 w-6 animate-spin" />
+                            Processing...
+                          </>
+                        ) : (
+                          "Start"
+                        )}
+                      </Button>
+                      <Button 
+                        onClick={() => handleScissorLiftAction("stop")} 
+                        disabled={loading}
+                        className="w-full py-8 text-xl font-semibold"
+                        variant="secondary"
+                      >
+                        {loading ? (
+                          <>
+                            <Loader2 className="mr-2 h-6 w-6 animate-spin" />
+                            Processing...
+                          </>
+                        ) : (
+                          "Stop"
+                        )}
+                      </Button>
                     </div>
                   )}
                 </>
