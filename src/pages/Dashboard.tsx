@@ -52,6 +52,26 @@ const features = [{
   description: "Belt Conveyor System",
   gradient: "from-accent to-secondary"
 }];
+
+const systemControls = [{
+  id: "amr-control",
+  name: "AMR",
+  icon: Cpu,
+  description: "Robot Control Actions",
+  gradient: "from-primary to-secondary"
+}, {
+  id: "bay-door-control",
+  name: "BAY DOOR",
+  icon: DoorOpen,
+  description: "Door Control Actions",
+  gradient: "from-accent to-primary"
+}, {
+  id: "locker-control",
+  name: "LOCKER",
+  icon: Lock,
+  description: "Locker Control Actions",
+  gradient: "from-secondary to-primary"
+}];
 const Dashboard = () => {
   const navigate = useNavigate();
   const { logout, token } = useAuth();
@@ -60,6 +80,7 @@ const Dashboard = () => {
   const [selectedTray, setSelectedTray] = useState<string>("");
   const [trays, setTrays] = useState<Tray[]>([]);
   const [loading, setLoading] = useState(false);
+  const [isControlDrawer, setIsControlDrawer] = useState(false);
 
   const fetchTrays = async () => {
     if (!token) return;
@@ -100,6 +121,7 @@ const Dashboard = () => {
   const handleSystemClick = (systemName: string) => {
     setSelectedSystem(systemName);
     setSelectedTray("");
+    setIsControlDrawer(false);
     setDrawerOpen(true);
     
     if (systemName === "SCARA") {
@@ -114,6 +136,46 @@ const Dashboard = () => {
       ]);
     } else {
       fetchTrays();
+    }
+  };
+
+  const handleControlClick = (controlName: string) => {
+    setSelectedSystem(controlName);
+    setIsControlDrawer(true);
+    setDrawerOpen(true);
+  };
+
+  const handleAMRAction = async (action: "pick" | "drop") => {
+    if (!token) return;
+
+    setLoading(true);
+    try {
+      const response = await fetch(
+        'https://staging.qikpod.com/pubsub/publish?topic=AMR_1',
+        {
+          method: 'POST',
+          headers: {
+            'accept': 'application/json',
+            'Authorization': `Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhY2wiOiJhZG1pbiIsImV4cCI6MTkwMDY2MDExOX0.m9Rrmvbo22sJpWgTVynJLDIXFxOfym48F-kGy-wSKqQ`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ action })
+        }
+      );
+      
+      const data = await response.json();
+      toast({
+        title: "AMR Action",
+        description: `${action.charAt(0).toUpperCase() + action.slice(1)} action executed successfully.`
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to execute action",
+        variant: "destructive"
+      });
+    } finally {
+      setLoading(false);
     }
   };
   const handleRequestTray = async () => {
@@ -299,11 +361,24 @@ const Dashboard = () => {
           <p className="text-sm text-muted-foreground">Select a system to control</p>
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-16">
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-8">
           {features.map((feature, index) => <div key={feature.id} className="animate-scale-in" style={{
           animationDelay: `${index * 0.1}s`
         }}>
               <FeatureCard {...feature} onClick={() => handleSystemClick(feature.name)} />
+            </div>)}
+        </div>
+
+        <div className="text-center mb-4 animate-fade-in">
+          <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-1">System Controls</h2>
+          <p className="text-sm text-muted-foreground">Direct system actions</p>
+        </div>
+
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-16">
+          {systemControls.map((control, index) => <div key={control.id} className="animate-scale-in" style={{
+          animationDelay: `${index * 0.1}s`
+        }}>
+              <FeatureCard {...control} onClick={() => handleControlClick(control.name)} />
             </div>)}
         </div>
 
@@ -317,64 +392,114 @@ const Dashboard = () => {
             </DrawerHeader>
             
             <div className="flex flex-col h-full p-4 overflow-hidden">
-              <div className="flex-1 overflow-y-auto space-y-3 mb-4">
-                {loading ? (
-                  <div className="flex items-center justify-center py-8">
-                    <Loader2 className="h-8 w-8 animate-spin text-accent" />
-                  </div>
-                ) : trays.length === 0 ? (
-                  <div className="text-center py-8 text-muted-foreground">
-                    <p>No trays available</p>
-                  </div>
-                ) : (
-                  trays.map(tray => (
-                    <button 
-                      key={tray.id} 
-                      onClick={() => setSelectedTray(tray.tray_id)} 
-                      className={`w-full p-4 rounded-lg border-2 text-left transition-all ${
-                        selectedTray === tray.tray_id 
-                          ? "border-accent bg-accent/10" 
-                          : "border-border bg-card hover:border-accent/50"
-                      }`}
-                    >
-                      <div className="font-bold text-foreground mb-2">
-                        {selectedSystem === "SCARA" ? `Item: ${tray.tray_id}` : tray.tray_id}
+              {isControlDrawer ? (
+                <>
+                  {selectedSystem === "AMR" && (
+                    <div className="flex-1 flex flex-col gap-4 justify-center">
+                      <Button 
+                        onClick={() => handleAMRAction("pick")} 
+                        disabled={loading}
+                        className="w-full py-8 text-xl font-semibold"
+                      >
+                        {loading ? (
+                          <>
+                            <Loader2 className="mr-2 h-6 w-6 animate-spin" />
+                            Processing...
+                          </>
+                        ) : (
+                          "Pick"
+                        )}
+                      </Button>
+                      <Button 
+                        onClick={() => handleAMRAction("drop")} 
+                        disabled={loading}
+                        className="w-full py-8 text-xl font-semibold"
+                        variant="secondary"
+                      >
+                        {loading ? (
+                          <>
+                            <Loader2 className="mr-2 h-6 w-6 animate-spin" />
+                            Processing...
+                          </>
+                        ) : (
+                          "Drop"
+                        )}
+                      </Button>
+                    </div>
+                  )}
+                  {selectedSystem === "BAY DOOR" && (
+                    <div className="flex-1 flex items-center justify-center text-muted-foreground">
+                      <p>Bay Door controls coming soon</p>
+                    </div>
+                  )}
+                  {selectedSystem === "LOCKER" && (
+                    <div className="flex-1 flex items-center justify-center text-muted-foreground">
+                      <p>Locker controls coming soon</p>
+                    </div>
+                  )}
+                </>
+              ) : (
+                <>
+                  <div className="flex-1 overflow-y-auto space-y-3 mb-4">
+                    {loading ? (
+                      <div className="flex items-center justify-center py-8">
+                        <Loader2 className="h-8 w-8 animate-spin text-accent" />
                       </div>
-                      <div className="grid grid-cols-3 gap-2 text-sm text-muted-foreground">
-                        <div>
-                          <div className="text-xs opacity-70">Weight</div>
-                          <div className="font-medium text-foreground">{tray.tray_weight} kg</div>
-                        </div>
-                        <div>
-                          <div className="text-xs opacity-70">Height</div>
-                          <div className="font-medium text-foreground">{tray.tray_height} cm</div>
-                        </div>
-                        <div>
-                          <div className="text-xs opacity-70">Status</div>
-                          <div className="font-medium text-foreground">{tray.tray_status}</div>
-                        </div>
+                    ) : trays.length === 0 ? (
+                      <div className="text-center py-8 text-muted-foreground">
+                        <p>No trays available</p>
                       </div>
-                    </button>
-                  ))
-                )}
-              </div>
-              
-              <Button 
-                onClick={handleRequestTray} 
-                disabled={!selectedTray || loading} 
-                className="w-full py-6 text-lg font-semibold"
-              >
-                {loading ? (
-                  <>
-                    <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                    Processing...
-                  </>
-                ) : selectedTray ? (
-                  selectedSystem === "SCARA" ? `Retrieve Item ${selectedTray}` : `Request Tray ${selectedTray}`
-                ) : (
-                  selectedSystem === "SCARA" ? "Select an Item" : "Select a Tray"
-                )}
-              </Button>
+                    ) : (
+                      trays.map(tray => (
+                        <button 
+                          key={tray.id} 
+                          onClick={() => setSelectedTray(tray.tray_id)} 
+                          className={`w-full p-4 rounded-lg border-2 text-left transition-all ${
+                            selectedTray === tray.tray_id 
+                              ? "border-accent bg-accent/10" 
+                              : "border-border bg-card hover:border-accent/50"
+                          }`}
+                        >
+                          <div className="font-bold text-foreground mb-2">
+                            {selectedSystem === "SCARA" ? `Item: ${tray.tray_id}` : tray.tray_id}
+                          </div>
+                          <div className="grid grid-cols-3 gap-2 text-sm text-muted-foreground">
+                            <div>
+                              <div className="text-xs opacity-70">Weight</div>
+                              <div className="font-medium text-foreground">{tray.tray_weight} kg</div>
+                            </div>
+                            <div>
+                              <div className="text-xs opacity-70">Height</div>
+                              <div className="font-medium text-foreground">{tray.tray_height} cm</div>
+                            </div>
+                            <div>
+                              <div className="text-xs opacity-70">Status</div>
+                              <div className="font-medium text-foreground">{tray.tray_status}</div>
+                            </div>
+                          </div>
+                        </button>
+                      ))
+                    )}
+                  </div>
+                  
+                  <Button 
+                    onClick={handleRequestTray} 
+                    disabled={!selectedTray || loading} 
+                    className="w-full py-6 text-lg font-semibold"
+                  >
+                    {loading ? (
+                      <>
+                        <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                        Processing...
+                      </>
+                    ) : selectedTray ? (
+                      selectedSystem === "SCARA" ? `Retrieve Item ${selectedTray}` : `Request Tray ${selectedTray}`
+                    ) : (
+                      selectedSystem === "SCARA" ? "Select an Item" : "Select a Tray"
+                    )}
+                  </Button>
+                </>
+              )}
             </div>
           </DrawerContent>
         </Drawer>
