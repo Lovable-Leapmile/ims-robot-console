@@ -523,11 +523,16 @@ const Dashboard = () => {
         </div>
 
         <Drawer open={drawerOpen} onOpenChange={setDrawerOpen}>
-          <DrawerContent className="h-[65vh]">
-            <DrawerHeader className="flex items-center justify-between border-b pb-4">
-              <DrawerTitle className="text-xl font-bold">{selectedSystem}</DrawerTitle>
-              <Button variant="ghost" size="icon" onClick={() => setDrawerOpen(false)} className="h-8 w-8">
-                <X className="h-5 w-5" />
+          <DrawerContent className="h-[70vh] bg-background/95 backdrop-blur-xl border-t-2 border-accent/20">
+            <DrawerHeader className="flex items-center justify-between border-b border-border/50 pb-6 pt-4">
+              <DrawerTitle className="text-2xl md:text-3xl font-bold text-foreground tracking-tight">{selectedSystem}</DrawerTitle>
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                onClick={() => setDrawerOpen(false)} 
+                className="h-12 w-12 rounded-full bg-accent hover:bg-accent/80 text-accent-foreground"
+              >
+                <X className="h-6 w-6" />
               </Button>
             </DrawerHeader>
             
@@ -535,15 +540,15 @@ const Dashboard = () => {
               {isControlDrawer ? (
                 <>
                   {selectedSystem === "AMR" && (
-                    <div className="flex-1 flex flex-col gap-4 justify-center">
+                    <div className="flex-1 flex flex-col gap-6 justify-center px-4 py-8">
                       <Button 
                         onClick={() => handleAMRAction("pick")} 
                         disabled={loading}
-                        className="w-full py-8 text-xl font-semibold"
+                        className="w-full py-10 text-2xl font-bold rounded-2xl bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]"
                       >
                         {loading ? (
                           <>
-                            <Loader2 className="mr-2 h-6 w-6 animate-spin" />
+                            <Loader2 className="mr-3 h-8 w-8 animate-spin" />
                             Processing...
                           </>
                         ) : (
@@ -553,12 +558,11 @@ const Dashboard = () => {
                       <Button 
                         onClick={() => handleAMRAction("drop")} 
                         disabled={loading}
-                        className="w-full py-8 text-xl font-semibold"
-                        variant="secondary"
+                        className="w-full py-10 text-2xl font-bold rounded-2xl bg-gradient-to-r from-secondary to-secondary/80 hover:from-secondary/90 hover:to-secondary/70 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]"
                       >
                         {loading ? (
                           <>
-                            <Loader2 className="mr-2 h-6 w-6 animate-spin" />
+                            <Loader2 className="mr-3 h-8 w-8 animate-spin" />
                             Processing...
                           </>
                         ) : (
@@ -568,15 +572,15 @@ const Dashboard = () => {
                     </div>
                   )}
                   {selectedSystem === "BAY DOOR" && (
-                    <div className="flex-1 flex flex-col gap-4 justify-center">
+                    <div className="flex-1 flex flex-col gap-6 justify-center px-4 py-8">
                       <Button 
                         onClick={() => handleBayDoorAction("open_door")} 
                         disabled={loading}
-                        className="w-full py-8 text-xl font-semibold"
+                        className="w-full py-10 text-2xl font-bold rounded-2xl bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]"
                       >
                         {loading ? (
                           <>
-                            <Loader2 className="mr-2 h-6 w-6 animate-spin" />
+                            <Loader2 className="mr-3 h-8 w-8 animate-spin" />
                             Processing...
                           </>
                         ) : (
@@ -586,12 +590,11 @@ const Dashboard = () => {
                       <Button 
                         onClick={() => handleBayDoorAction("close_door")} 
                         disabled={loading}
-                        className="w-full py-8 text-xl font-semibold"
-                        variant="secondary"
+                        className="w-full py-10 text-2xl font-bold rounded-2xl bg-gradient-to-r from-secondary to-secondary/80 hover:from-secondary/90 hover:to-secondary/70 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]"
                       >
                         {loading ? (
                           <>
-                            <Loader2 className="mr-2 h-6 w-6 animate-spin" />
+                            <Loader2 className="mr-3 h-8 w-8 animate-spin" />
                             Processing...
                           </>
                         ) : (
@@ -601,15 +604,15 @@ const Dashboard = () => {
                     </div>
                   )}
                   {selectedSystem === "LOCKER" && (
-                    <div className="flex-1 flex flex-col gap-4 justify-center">
+                    <div className="flex-1 flex flex-col gap-6 justify-center px-4 py-8">
                       <Button 
                         onClick={() => handleLockerAction("open")} 
                         disabled={loading}
-                        className="w-full py-8 text-xl font-semibold"
+                        className="w-full py-10 text-2xl font-bold rounded-2xl bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]"
                       >
                         {loading ? (
                           <>
-                            <Loader2 className="mr-2 h-6 w-6 animate-spin" />
+                            <Loader2 className="mr-3 h-8 w-8 animate-spin" />
                             Processing...
                           </>
                         ) : (
@@ -619,12 +622,11 @@ const Dashboard = () => {
                       <Button 
                         onClick={() => handleLockerAction("close")} 
                         disabled={loading}
-                        className="w-full py-8 text-xl font-semibold"
-                        variant="secondary"
+                        className="w-full py-10 text-2xl font-bold rounded-2xl bg-gradient-to-r from-secondary to-secondary/80 hover:from-secondary/90 hover:to-secondary/70 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]"
                       >
                         {loading ? (
                           <>
-                            <Loader2 className="mr-2 h-6 w-6 animate-spin" />
+                            <Loader2 className="mr-3 h-8 w-8 animate-spin" />
                             Processing...
                           </>
                         ) : (
@@ -634,15 +636,15 @@ const Dashboard = () => {
                     </div>
                   )}
                   {selectedSystem === "CONVEYOR" && (
-                    <div className="flex-1 flex flex-col gap-4 justify-center">
+                    <div className="flex-1 flex flex-col gap-6 justify-center px-4 py-8">
                       <Button 
                         onClick={() => handleConveyorAction("eject")} 
                         disabled={loading}
-                        className="w-full py-8 text-xl font-semibold"
+                        className="w-full py-10 text-2xl font-bold rounded-2xl bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]"
                       >
                         {loading ? (
                           <>
-                            <Loader2 className="mr-2 h-6 w-6 animate-spin" />
+                            <Loader2 className="mr-3 h-8 w-8 animate-spin" />
                             Processing...
                           </>
                         ) : (
@@ -652,12 +654,11 @@ const Dashboard = () => {
                       <Button 
                         onClick={() => handleConveyorAction("inject")} 
                         disabled={loading}
-                        className="w-full py-8 text-xl font-semibold"
-                        variant="secondary"
+                        className="w-full py-10 text-2xl font-bold rounded-2xl bg-gradient-to-r from-secondary to-secondary/80 hover:from-secondary/90 hover:to-secondary/70 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]"
                       >
                         {loading ? (
                           <>
-                            <Loader2 className="mr-2 h-6 w-6 animate-spin" />
+                            <Loader2 className="mr-3 h-8 w-8 animate-spin" />
                             Processing...
                           </>
                         ) : (
@@ -667,15 +668,15 @@ const Dashboard = () => {
                     </div>
                   )}
                   {selectedSystem === "SCISSOR LIFT" && (
-                    <div className="flex-1 flex flex-col gap-4 justify-center">
+                    <div className="flex-1 flex flex-col gap-6 justify-center px-4 py-8">
                       <Button 
                         onClick={() => handleScissorLiftAction("start")} 
                         disabled={loading}
-                        className="w-full py-8 text-xl font-semibold"
+                        className="w-full py-10 text-2xl font-bold rounded-2xl bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]"
                       >
                         {loading ? (
                           <>
-                            <Loader2 className="mr-2 h-6 w-6 animate-spin" />
+                            <Loader2 className="mr-3 h-8 w-8 animate-spin" />
                             Processing...
                           </>
                         ) : (
@@ -685,12 +686,11 @@ const Dashboard = () => {
                       <Button 
                         onClick={() => handleScissorLiftAction("stop")} 
                         disabled={loading}
-                        className="w-full py-8 text-xl font-semibold"
-                        variant="secondary"
+                        className="w-full py-10 text-2xl font-bold rounded-2xl bg-gradient-to-r from-secondary to-secondary/80 hover:from-secondary/90 hover:to-secondary/70 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]"
                       >
                         {loading ? (
                           <>
-                            <Loader2 className="mr-2 h-6 w-6 animate-spin" />
+                            <Loader2 className="mr-3 h-8 w-8 animate-spin" />
                             Processing...
                           </>
                         ) : (
