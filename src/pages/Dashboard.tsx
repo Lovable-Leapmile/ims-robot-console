@@ -96,6 +96,7 @@ const Dashboard = () => {
   const [lockerStatus, setLockerStatus] = useState<any>(null);
   const [conveyorStatus, setConveyorStatus] = useState<any>(null);
   const [bayDoorStatus, setBayDoorStatus] = useState<any>(null);
+  const [statusInterval, setStatusInterval] = useState<NodeJS.Timeout | null>(null);
 
   const fetchTrays = async () => {
     if (!token) return;
@@ -154,10 +155,37 @@ const Dashboard = () => {
     }
   };
 
+  const fetchStatus = async (topic: string, setStatus: (data: any) => void) => {
+    try {
+      const response = await fetch(
+        `https://staging.qikpod.com/pubsub/subscribe?topic=${topic}&num_records=1`,
+        {
+          headers: {
+            'accept': 'application/json',
+            'Authorization': `Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhY2wiOiJhZG1pbiIsImV4cCI6MTkwMDY2MDExOX0.m9Rrmvbo22sJpWgTVynJLDIXFxOfym48F-kGy-wSKqQ`
+          }
+        }
+      );
+      
+      const data = await response.json();
+      if (data.records && data.records.length > 0) {
+        setStatus(data.records[0]);
+      }
+    } catch (error) {
+      console.error("Failed to fetch status:", error);
+    }
+  };
+
   const handleControlClick = async (controlName: string) => {
     setSelectedSystem(controlName);
     setIsControlDrawer(true);
     setDrawerOpen(true);
+    
+    // Clear existing interval if any
+    if (statusInterval) {
+      clearInterval(statusInterval);
+      setStatusInterval(null);
+    }
     
     setLoading(true);
     try {
@@ -176,19 +204,15 @@ const Dashboard = () => {
       }
       
       if (topic && setStatus) {
-        const response = await fetch(
-          `https://staging.qikpod.com/pubsub/subscribe?topic=${topic}&num_records=1`,
-          {
-            headers: {
-              'accept': 'application/json',
-              'Authorization': `Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhY2wiOiJhZG1pbiIsImV4cCI6MTkwMDY2MDExOX0.m9Rrmvbo22sJpWgTVynJLDIXFxOfym48F-kGy-wSKqQ`
-            }
-          }
-        );
+        // Initial fetch
+        await fetchStatus(topic, setStatus);
         
-        const data = await response.json();
-        if (data.records && data.records.length > 0) {
-          setStatus(data.records[0]);
+        // Set up interval for Conveyor and Bay Door only
+        if (controlName === "CONVEYOR" || controlName === "BAY DOOR") {
+          const interval = setInterval(() => {
+            fetchStatus(topic, setStatus);
+          }, 3000);
+          setStatusInterval(interval);
         }
       }
     } catch (error) {
@@ -197,6 +221,14 @@ const Dashboard = () => {
       setLoading(false);
     }
   };
+
+  // Cleanup interval when drawer closes
+  useEffect(() => {
+    if (!drawerOpen && statusInterval) {
+      clearInterval(statusInterval);
+      setStatusInterval(null);
+    }
+  }, [drawerOpen, statusInterval]);
 
   const handleAMRAction = async (action: "pick" | "drop") => {
     if (!token) return;
@@ -253,9 +285,6 @@ const Dashboard = () => {
         title: "Bay Door Action",
         description: `${action.charAt(0).toUpperCase() + action.slice(1)} action executed successfully.`
       });
-      
-      // Refetch status after action
-      handleControlClick("BAY DOOR");
     } catch (error) {
       toast({
         title: "Error",
@@ -320,9 +349,6 @@ const Dashboard = () => {
         title: "Conveyor Action",
         description: `${action.charAt(0).toUpperCase() + action.slice(1)} action executed successfully.`
       });
-      
-      // Refetch status after action
-      handleControlClick("CONVEYOR");
     } catch (error) {
       toast({
         title: "Error",
@@ -655,7 +681,7 @@ const Dashboard = () => {
                       <div className="flex-1 flex flex-col gap-4 justify-center">
                         <Button 
                           onClick={() => handleBayDoorAction("open_door")} 
-                          disabled={loading || bayDoorStatus?.message?.action === "open_door"}
+                          disabled={loading}
                           className="w-full py-8 text-xl font-semibold"
                         >
                           {loading ? (
@@ -669,7 +695,7 @@ const Dashboard = () => {
                         </Button>
                         <Button 
                           onClick={() => handleBayDoorAction("close_door")} 
-                          disabled={loading || bayDoorStatus?.message?.action === "close_door"}
+                          disabled={loading}
                           className="w-full py-8 text-xl font-semibold"
                           variant="secondary"
                         >
@@ -763,7 +789,7 @@ const Dashboard = () => {
                       <div className="flex-1 flex flex-col gap-4 justify-center">
                         <Button 
                           onClick={() => handleConveyorAction("eject")} 
-                          disabled={loading || conveyorStatus?.message?.action === "eject"}
+                          disabled={loading}
                           className="w-full py-8 text-xl font-semibold"
                         >
                           {loading ? (
@@ -777,7 +803,7 @@ const Dashboard = () => {
                         </Button>
                         <Button 
                           onClick={() => handleConveyorAction("inject")} 
-                          disabled={loading || conveyorStatus?.message?.action === "inject"}
+                          disabled={loading}
                           className="w-full py-8 text-xl font-semibold"
                           variant="secondary"
                         >
