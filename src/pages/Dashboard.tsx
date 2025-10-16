@@ -94,6 +94,8 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(false);
   const [isControlDrawer, setIsControlDrawer] = useState(false);
   const [lockerStatus, setLockerStatus] = useState<any>(null);
+  const [conveyorStatus, setConveyorStatus] = useState<any>(null);
+  const [bayDoorStatus, setBayDoorStatus] = useState<any>(null);
 
   const fetchTrays = async () => {
     if (!token) return;
@@ -157,12 +159,25 @@ const Dashboard = () => {
     setIsControlDrawer(true);
     setDrawerOpen(true);
     
-    // Fetch locker status when locker control is opened
-    if (controlName === "LOCKER") {
-      setLoading(true);
-      try {
+    setLoading(true);
+    try {
+      let topic = '';
+      let setStatus: ((data: any) => void) | null = null;
+      
+      if (controlName === "LOCKER") {
+        topic = "LOCKER";
+        setStatus = setLockerStatus;
+      } else if (controlName === "CONVEYOR") {
+        topic = "Conveyor";
+        setStatus = setConveyorStatus;
+      } else if (controlName === "BAY DOOR") {
+        topic = "Bay";
+        setStatus = setBayDoorStatus;
+      }
+      
+      if (topic && setStatus) {
         const response = await fetch(
-          'https://staging.qikpod.com/pubsub/subscribe?topic=LOCKER&num_records=1',
+          `https://staging.qikpod.com/pubsub/subscribe?topic=${topic}&num_records=1`,
           {
             headers: {
               'accept': 'application/json',
@@ -172,14 +187,14 @@ const Dashboard = () => {
         );
         
         const data = await response.json();
-        if (data && data.length > 0) {
-          setLockerStatus(data[0]);
+        if (data.records && data.records.length > 0) {
+          setStatus(data.records[0]);
         }
-      } catch (error) {
-        console.error("Failed to fetch locker status:", error);
-      } finally {
-        setLoading(false);
       }
+    } catch (error) {
+      console.error("Failed to fetch status:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -238,6 +253,9 @@ const Dashboard = () => {
         title: "Bay Door Action",
         description: `${action.charAt(0).toUpperCase() + action.slice(1)} action executed successfully.`
       });
+      
+      // Refetch status after action
+      handleControlClick("BAY DOOR");
     } catch (error) {
       toast({
         title: "Error",
@@ -302,6 +320,9 @@ const Dashboard = () => {
         title: "Conveyor Action",
         description: `${action.charAt(0).toUpperCase() + action.slice(1)} action executed successfully.`
       });
+      
+      // Refetch status after action
+      handleControlClick("CONVEYOR");
     } catch (error) {
       toast({
         title: "Error",
@@ -558,7 +579,19 @@ const Dashboard = () => {
                     Locker Controls
                   </>
                 )}
-                {(!isControlDrawer || selectedSystem !== "LOCKER") && selectedSystem}
+                {isControlDrawer && selectedSystem === "CONVEYOR" && (
+                  <>
+                    <Cuboid className="h-6 w-6" />
+                    Conveyor Controls
+                  </>
+                )}
+                {isControlDrawer && selectedSystem === "BAY DOOR" && (
+                  <>
+                    <DoorOpen className="h-6 w-6" />
+                    Bay Door Controls
+                  </>
+                )}
+                {!isControlDrawer && selectedSystem}
               </DrawerTitle>
             </DrawerHeader>
             
@@ -599,36 +632,57 @@ const Dashboard = () => {
                     </div>
                   )}
                   {selectedSystem === "BAY DOOR" && (
-                    <div className="flex-1 flex flex-col gap-4 justify-center">
-                      <Button 
-                        onClick={() => handleBayDoorAction("open_door")} 
-                        disabled={loading}
-                        className="w-full py-8 text-xl font-semibold"
-                      >
-                        {loading ? (
-                          <>
-                            <Loader2 className="mr-2 h-6 w-6 animate-spin" />
-                            Processing...
-                          </>
-                        ) : (
-                          "Open Door"
-                        )}
-                      </Button>
-                      <Button 
-                        onClick={() => handleBayDoorAction("close_door")} 
-                        disabled={loading}
-                        className="w-full py-8 text-xl font-semibold"
-                        variant="secondary"
-                      >
-                        {loading ? (
-                          <>
-                            <Loader2 className="mr-2 h-6 w-6 animate-spin" />
-                            Processing...
-                          </>
-                        ) : (
-                          "Close Door"
-                        )}
-                      </Button>
+                    <div className="flex-1 flex flex-col gap-4">
+                      {bayDoorStatus && (
+                        <div className="bg-card border-2 border-border rounded-lg p-4 mb-4">
+                          <h3 className="text-lg font-semibold text-foreground mb-3">Current Status</h3>
+                          <div className="space-y-2 text-sm">
+                            <div className="flex justify-between">
+                              <span className="text-muted-foreground">Topic:</span>
+                              <span className="text-foreground font-medium">{bayDoorStatus.topic}</span>
+                            </div>
+                            <div className="flex justify-between">
+                              <span className="text-muted-foreground">Last Action:</span>
+                              <span className="text-foreground font-medium capitalize">{bayDoorStatus.message?.action?.replace(/_/g, ' ')}</span>
+                            </div>
+                            <div className="flex justify-between">
+                              <span className="text-muted-foreground">Timestamp:</span>
+                              <span className="text-foreground font-medium">{new Date(bayDoorStatus.created_at).toLocaleString()}</span>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                      <div className="flex-1 flex flex-col gap-4 justify-center">
+                        <Button 
+                          onClick={() => handleBayDoorAction("open_door")} 
+                          disabled={loading || bayDoorStatus?.message?.action === "open_door"}
+                          className="w-full py-8 text-xl font-semibold"
+                        >
+                          {loading ? (
+                            <>
+                              <Loader2 className="mr-2 h-6 w-6 animate-spin" />
+                              Processing...
+                            </>
+                          ) : (
+                            "Open Door"
+                          )}
+                        </Button>
+                        <Button 
+                          onClick={() => handleBayDoorAction("close_door")} 
+                          disabled={loading || bayDoorStatus?.message?.action === "close_door"}
+                          className="w-full py-8 text-xl font-semibold"
+                          variant="secondary"
+                        >
+                          {loading ? (
+                            <>
+                              <Loader2 className="mr-2 h-6 w-6 animate-spin" />
+                              Processing...
+                            </>
+                          ) : (
+                            "Close Door"
+                          )}
+                        </Button>
+                      </div>
                     </div>
                   )}
                   {selectedSystem === "LOCKER" && (
@@ -637,12 +691,18 @@ const Dashboard = () => {
                         <div className="bg-card border-2 border-border rounded-lg p-4 mb-4">
                           <h3 className="text-lg font-semibold text-foreground mb-3">Current Status</h3>
                           <div className="space-y-2 text-sm">
-                            {Object.entries(lockerStatus).map(([key, value]) => (
-                              <div key={key} className="flex justify-between">
-                                <span className="text-muted-foreground capitalize">{key.replace(/_/g, ' ')}:</span>
-                                <span className="text-foreground font-medium">{String(value)}</span>
-                              </div>
-                            ))}
+                            <div className="flex justify-between">
+                              <span className="text-muted-foreground">Topic:</span>
+                              <span className="text-foreground font-medium">{lockerStatus.topic}</span>
+                            </div>
+                            <div className="flex justify-between">
+                              <span className="text-muted-foreground">Last Action:</span>
+                              <span className="text-foreground font-medium capitalize">{lockerStatus.message?.action}</span>
+                            </div>
+                            <div className="flex justify-between">
+                              <span className="text-muted-foreground">Timestamp:</span>
+                              <span className="text-foreground font-medium">{new Date(lockerStatus.created_at).toLocaleString()}</span>
+                            </div>
                           </div>
                         </div>
                       )}
@@ -680,36 +740,57 @@ const Dashboard = () => {
                     </div>
                   )}
                   {selectedSystem === "CONVEYOR" && (
-                    <div className="flex-1 flex flex-col gap-4 justify-center">
-                      <Button 
-                        onClick={() => handleConveyorAction("eject")} 
-                        disabled={loading}
-                        className="w-full py-8 text-xl font-semibold"
-                      >
-                        {loading ? (
-                          <>
-                            <Loader2 className="mr-2 h-6 w-6 animate-spin" />
-                            Processing...
-                          </>
-                        ) : (
-                          "Eject Tray"
-                        )}
-                      </Button>
-                      <Button 
-                        onClick={() => handleConveyorAction("inject")} 
-                        disabled={loading}
-                        className="w-full py-8 text-xl font-semibold"
-                        variant="secondary"
-                      >
-                        {loading ? (
-                          <>
-                            <Loader2 className="mr-2 h-6 w-6 animate-spin" />
-                            Processing...
-                          </>
-                        ) : (
-                          "Inject Tray"
-                        )}
-                      </Button>
+                    <div className="flex-1 flex flex-col gap-4">
+                      {conveyorStatus && (
+                        <div className="bg-card border-2 border-border rounded-lg p-4 mb-4">
+                          <h3 className="text-lg font-semibold text-foreground mb-3">Current Status</h3>
+                          <div className="space-y-2 text-sm">
+                            <div className="flex justify-between">
+                              <span className="text-muted-foreground">Topic:</span>
+                              <span className="text-foreground font-medium">{conveyorStatus.topic}</span>
+                            </div>
+                            <div className="flex justify-between">
+                              <span className="text-muted-foreground">Last Action:</span>
+                              <span className="text-foreground font-medium capitalize">{conveyorStatus.message?.action}</span>
+                            </div>
+                            <div className="flex justify-between">
+                              <span className="text-muted-foreground">Timestamp:</span>
+                              <span className="text-foreground font-medium">{new Date(conveyorStatus.created_at).toLocaleString()}</span>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                      <div className="flex-1 flex flex-col gap-4 justify-center">
+                        <Button 
+                          onClick={() => handleConveyorAction("eject")} 
+                          disabled={loading || conveyorStatus?.message?.action === "eject"}
+                          className="w-full py-8 text-xl font-semibold"
+                        >
+                          {loading ? (
+                            <>
+                              <Loader2 className="mr-2 h-6 w-6 animate-spin" />
+                              Processing...
+                            </>
+                          ) : (
+                            "Eject Tray"
+                          )}
+                        </Button>
+                        <Button 
+                          onClick={() => handleConveyorAction("inject")} 
+                          disabled={loading || conveyorStatus?.message?.action === "inject"}
+                          className="w-full py-8 text-xl font-semibold"
+                          variant="secondary"
+                        >
+                          {loading ? (
+                            <>
+                              <Loader2 className="mr-2 h-6 w-6 animate-spin" />
+                              Processing...
+                            </>
+                          ) : (
+                            "Inject Tray"
+                          )}
+                        </Button>
+                      </div>
                     </div>
                   )}
                   {selectedSystem === "SCISSOR LIFT" && (
