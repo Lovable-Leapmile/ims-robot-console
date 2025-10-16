@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Cpu, Boxes, DoorOpen, MoveVertical, Lock, Cuboid, X, LogOut, Loader2 } from "lucide-react";
+import { Cpu, Boxes, DoorOpen, MoveVertical, Lock, Cuboid, LogOut, Loader2 } from "lucide-react";
 import FeatureCard from "@/components/FeatureCard";
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from "@/components/ui/drawer";
 import { toast } from "@/hooks/use-toast";
@@ -93,6 +93,7 @@ const Dashboard = () => {
   const [trays, setTrays] = useState<Tray[]>([]);
   const [loading, setLoading] = useState(false);
   const [isControlDrawer, setIsControlDrawer] = useState(false);
+  const [lockerStatus, setLockerStatus] = useState<any>(null);
 
   const fetchTrays = async () => {
     if (!token) return;
@@ -151,10 +152,35 @@ const Dashboard = () => {
     }
   };
 
-  const handleControlClick = (controlName: string) => {
+  const handleControlClick = async (controlName: string) => {
     setSelectedSystem(controlName);
     setIsControlDrawer(true);
     setDrawerOpen(true);
+    
+    // Fetch locker status when locker control is opened
+    if (controlName === "LOCKER") {
+      setLoading(true);
+      try {
+        const response = await fetch(
+          'https://staging.qikpod.com/pubsub/subscribe?topic=LOCKER&num_records=1',
+          {
+            headers: {
+              'accept': 'application/json',
+              'Authorization': `Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhY2wiOiJhZG1pbiIsImV4cCI6MTkwMDY2MDExOX0.m9Rrmvbo22sJpWgTVynJLDIXFxOfym48F-kGy-wSKqQ`
+            }
+          }
+        );
+        
+        const data = await response.json();
+        if (data && data.length > 0) {
+          setLockerStatus(data[0]);
+        }
+      } catch (error) {
+        console.error("Failed to fetch locker status:", error);
+      } finally {
+        setLoading(false);
+      }
+    }
   };
 
   const handleAMRAction = async (action: "pick" | "drop") => {
@@ -227,7 +253,7 @@ const Dashboard = () => {
     setLoading(true);
     try {
       const response = await fetch(
-        'https://staging.qikpod.com/pubsub/publish?topic=LOOKER',
+        'https://staging.qikpod.com/pubsub/publish?topic=LOCKER',
         {
           method: 'POST',
           headers: {
@@ -524,11 +550,16 @@ const Dashboard = () => {
 
         <Drawer open={drawerOpen} onOpenChange={setDrawerOpen}>
           <DrawerContent className="h-[65vh]">
-            <DrawerHeader className="flex items-center justify-between border-b pb-4">
-              <DrawerTitle className="text-xl font-bold">{selectedSystem}</DrawerTitle>
-              <Button variant="ghost" size="icon" onClick={() => setDrawerOpen(false)} className="h-8 w-8">
-                <X className="h-5 w-5" />
-              </Button>
+            <DrawerHeader className="border-b pb-4">
+              <DrawerTitle className="text-xl font-bold flex items-center gap-2">
+                {isControlDrawer && selectedSystem === "LOCKER" && (
+                  <>
+                    <Lock className="h-6 w-6" />
+                    Locker Controls
+                  </>
+                )}
+                {(!isControlDrawer || selectedSystem !== "LOCKER") && selectedSystem}
+              </DrawerTitle>
             </DrawerHeader>
             
             <div className="flex flex-col h-full p-4 overflow-hidden">
@@ -601,36 +632,51 @@ const Dashboard = () => {
                     </div>
                   )}
                   {selectedSystem === "LOCKER" && (
-                    <div className="flex-1 flex flex-col gap-4 justify-center">
-                      <Button 
-                        onClick={() => handleLockerAction("open")} 
-                        disabled={loading}
-                        className="w-full py-8 text-xl font-semibold"
-                      >
-                        {loading ? (
-                          <>
-                            <Loader2 className="mr-2 h-6 w-6 animate-spin" />
-                            Processing...
-                          </>
-                        ) : (
-                          "Open"
-                        )}
-                      </Button>
-                      <Button 
-                        onClick={() => handleLockerAction("close")} 
-                        disabled={loading}
-                        className="w-full py-8 text-xl font-semibold"
-                        variant="secondary"
-                      >
-                        {loading ? (
-                          <>
-                            <Loader2 className="mr-2 h-6 w-6 animate-spin" />
-                            Processing...
-                          </>
-                        ) : (
-                          "Close"
-                        )}
-                      </Button>
+                    <div className="flex-1 flex flex-col gap-4">
+                      {lockerStatus && (
+                        <div className="bg-card border-2 border-border rounded-lg p-4 mb-4">
+                          <h3 className="text-lg font-semibold text-foreground mb-3">Current Status</h3>
+                          <div className="space-y-2 text-sm">
+                            {Object.entries(lockerStatus).map(([key, value]) => (
+                              <div key={key} className="flex justify-between">
+                                <span className="text-muted-foreground capitalize">{key.replace(/_/g, ' ')}:</span>
+                                <span className="text-foreground font-medium">{String(value)}</span>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                      <div className="flex-1 flex flex-col gap-4 justify-center">
+                        <Button 
+                          onClick={() => handleLockerAction("open")} 
+                          disabled={loading}
+                          className="w-full py-8 text-xl font-semibold"
+                        >
+                          {loading ? (
+                            <>
+                              <Loader2 className="mr-2 h-6 w-6 animate-spin" />
+                              Processing...
+                            </>
+                          ) : (
+                            "Open"
+                          )}
+                        </Button>
+                        <Button 
+                          onClick={() => handleLockerAction("close")} 
+                          disabled={loading}
+                          className="w-full py-8 text-xl font-semibold"
+                          variant="secondary"
+                        >
+                          {loading ? (
+                            <>
+                              <Loader2 className="mr-2 h-6 w-6 animate-spin" />
+                              Processing...
+                            </>
+                          ) : (
+                            "Close"
+                          )}
+                        </Button>
+                      </div>
                     </div>
                   )}
                   {selectedSystem === "CONVEYOR" && (
