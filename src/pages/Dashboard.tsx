@@ -156,6 +156,7 @@ const Dashboard = () => {
   };
 
   const fetchStatus = async (topic: string, setStatus: (data: any) => void) => {
+    console.log(`Fetching status for topic: ${topic}`);
     try {
       const response = await fetch(
         `https://staging.qikpod.com/pubsub/subscribe?topic=${topic}&num_records=1`,
@@ -168,21 +169,27 @@ const Dashboard = () => {
       );
       
       const data = await response.json();
+      console.log(`Status data for ${topic}:`, data);
       if (data.records && data.records.length > 0) {
+        console.log(`Setting status for ${topic}:`, data.records[0]);
         setStatus(data.records[0]);
+      } else {
+        console.log(`No records found for ${topic}`);
       }
     } catch (error) {
-      console.error("Failed to fetch status:", error);
+      console.error(`Failed to fetch status for ${topic}:`, error);
     }
   };
 
   const handleControlClick = async (controlName: string) => {
+    console.log(`Opening control drawer for: ${controlName}`);
     setSelectedSystem(controlName);
     setIsControlDrawer(true);
     setDrawerOpen(true);
     
     // Clear existing interval if any
     if (statusInterval) {
+      console.log('Clearing existing interval');
       clearInterval(statusInterval);
       setStatusInterval(null);
     }
@@ -204,12 +211,16 @@ const Dashboard = () => {
       }
       
       if (topic && setStatus) {
+        console.log(`Setting up polling for ${controlName} with topic ${topic}`);
+        
         // Initial fetch
         await fetchStatus(topic, setStatus);
         
         // Set up interval for Conveyor and Bay Door only
         if (controlName === "CONVEYOR" || controlName === "BAY DOOR") {
+          console.log(`Starting 3-second interval for ${controlName}`);
           const interval = setInterval(() => {
+            console.log(`Interval tick for ${controlName}`);
             fetchStatus(topic, setStatus);
           }, 3000);
           setStatusInterval(interval);
@@ -224,11 +235,21 @@ const Dashboard = () => {
 
   // Cleanup interval when drawer closes
   useEffect(() => {
+    return () => {
+      if (statusInterval) {
+        console.log('Cleanup: Clearing interval on unmount or drawer close');
+        clearInterval(statusInterval);
+      }
+    };
+  }, [statusInterval]);
+
+  useEffect(() => {
     if (!drawerOpen && statusInterval) {
+      console.log('Drawer closed, clearing interval');
       clearInterval(statusInterval);
       setStatusInterval(null);
     }
-  }, [drawerOpen, statusInterval]);
+  }, [drawerOpen]);
 
   const handleAMRAction = async (action: "pick" | "drop") => {
     if (!token) return;
