@@ -159,7 +159,7 @@ const Dashboard = () => {
     console.log(`Fetching status for topic: ${topic}`);
     try {
       const response = await fetch(
-        `http://eventinternal.leapmile.com/pubsub/subscribe?topic=${topic}&num_records=1`,
+        `https://eventinternal.leapmile.com/pubsub/subscribe?topic=${topic}&num_records=1`,
         {
           headers: {
             'accept': 'application/json',
@@ -257,7 +257,7 @@ const Dashboard = () => {
     setLoading(true);
     try {
       const response = await fetch(
-        'http://eventinternal.leapmile.com/pubsub/publish?topic=AMR_1',
+        'https://eventinternal.leapmile.com/pubsub/publish?topic=AMR_1',
         {
           method: 'POST',
           headers: {
@@ -289,7 +289,7 @@ const Dashboard = () => {
     setLoading(true);
     try {
       const response = await fetch(
-        'http://eventinternal.leapmile.com/pubsub/publish?topic=Bay',
+        'https://eventinternal.leapmile.com/pubsub/publish?topic=Bay',
         {
           method: 'POST',
           headers: {
@@ -321,7 +321,7 @@ const Dashboard = () => {
     setLoading(true);
     try {
       const response = await fetch(
-        'http://eventinternal.leapmile.com/pubsub/publish?topic=LOCKER',
+        'https://eventinternal.leapmile.com/pubsub/publish?topic=LOCKER',
         {
           method: 'POST',
           headers: {
@@ -353,7 +353,7 @@ const Dashboard = () => {
     setLoading(true);
     try {
       const response = await fetch(
-        'http://eventinternal.leapmile.com/pubsub/publish?topic=Conveyor',
+        'https://eventinternal.leapmile.com/pubsub/publish?topic=Conveyor',
         {
           method: 'POST',
           headers: {
@@ -385,7 +385,7 @@ const Dashboard = () => {
     setLoading(true);
     try {
       const response = await fetch(
-        'http://eventinternal.leapmile.com/pubsub/publish?topic=SCISSOR_LIFT',
+        'https://eventinternal.leapmile.com/pubsub/publish?topic=SCISSOR_LIFT',
         {
           method: 'POST',
           headers: {
