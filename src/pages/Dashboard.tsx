@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Cpu, Boxes, DoorOpen, MoveVertical, Lock, Cuboid, LogOut, Loader2, Truck } from "lucide-react";
+import { Cpu, Boxes, DoorOpen, MoveVertical, Lock, Cuboid, LogOut, Loader2, Truck, Cog } from "lucide-react";
 import FeatureCard from "@/components/FeatureCard";
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from "@/components/ui/drawer";
 import { toast } from "@/hooks/use-toast";
@@ -89,6 +89,12 @@ const systemControls = [{
   icon: Truck,
   description: "Shuttle Control Actions",
   gradient: "from-secondary to-accent"
+}, {
+  id: "scara-control",
+  name: "SCARA",
+  icon: Cog,
+  description: "SCARA Control Actions",
+  gradient: "from-primary to-secondary"
 }];
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -103,6 +109,7 @@ const Dashboard = () => {
   const [conveyorStatus, setConveyorStatus] = useState<any>(null);
   const [bayDoorStatus, setBayDoorStatus] = useState<any>(null);
   const [shuttleStatus, setShuttleStatus] = useState<any>(null);
+  const [scaraStatus, setScaraStatus] = useState<any>(null);
   const [statusInterval, setStatusInterval] = useState<NodeJS.Timeout | null>(null);
 
   const fetchTrays = async () => {
@@ -218,6 +225,9 @@ const Dashboard = () => {
       } else if (controlName === "SHUTTLE") {
         topic = "Shuttle";
         setStatus = setShuttleStatus;
+      } else if (controlName === "SCARA") {
+        topic = "Scara";
+        setStatus = setScaraStatus;
       }
       
       if (topic && setStatus) {
@@ -226,8 +236,8 @@ const Dashboard = () => {
         // Initial fetch
         await fetchStatus(topic, setStatus);
         
-        // Set up interval for Conveyor, Bay Door, and Shuttle
-        if (controlName === "CONVEYOR" || controlName === "BAY DOOR" || controlName === "SHUTTLE") {
+        // Set up interval for Conveyor, Bay Door, Shuttle, and Scara
+        if (controlName === "CONVEYOR" || controlName === "BAY DOOR" || controlName === "SHUTTLE" || controlName === "SCARA") {
           console.log(`Starting 3-second interval for ${controlName}`);
           const interval = setInterval(() => {
             console.log(`Interval tick for ${controlName}`);
@@ -443,6 +453,38 @@ const Dashboard = () => {
       toast({
         title: "Shuttle Action",
         description: `Action ${action === "action1" ? "1" : "2"} executed successfully.`
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to execute action",
+        variant: "destructive"
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleScaraAction = async () => {
+    setLoading(true);
+    try {
+      const response = await fetch(
+        'https://eventinternal.leapmile.com/pubsub/publish?topic=Scara',
+        {
+          method: 'POST',
+          headers: {
+            'accept': 'application/json',
+            'Authorization': `Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhY2wiOiJhZG1pbiIsImV4cCI6MTkwMDY2MDExOX0.m9Rrmvbo22sJpWgTVynJLDIXFxOfym48F-kGy-wSKqQ`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ action: "start_picking" })
+        }
+      );
+      
+      const data = await response.json();
+      toast({
+        title: "SCARA Action",
+        description: "Start picking action executed successfully."
       });
     } catch (error) {
       toast({
@@ -684,6 +726,12 @@ const Dashboard = () => {
                   <>
                     <Truck className="h-6 w-6" />
                     Shuttle Controls
+                  </>
+                )}
+                {isControlDrawer && selectedSystem === "SCARA" && (
+                  <>
+                    <Cog className="h-6 w-6" />
+                    SCARA Controls
                   </>
                 )}
                 {!isControlDrawer && selectedSystem}
@@ -970,6 +1018,45 @@ const Dashboard = () => {
                             </>
                           ) : (
                             "Action 2"
+                          )}
+                        </Button>
+                      </div>
+                    </div>
+                  )}
+                  {selectedSystem === "SCARA" && (
+                    <div className="flex-1 flex flex-col gap-4">
+                      {scaraStatus && (
+                        <div className="bg-card border-2 border-border rounded-lg p-4 mb-4">
+                          <h3 className="text-lg font-semibold text-foreground mb-3">Current Status</h3>
+                          <div className="space-y-2 text-sm">
+                            <div className="flex justify-between">
+                              <span className="text-muted-foreground">Topic:</span>
+                              <span className="text-foreground font-medium">{scaraStatus.topic}</span>
+                            </div>
+                            <div className="flex justify-between">
+                              <span className="text-muted-foreground">Last Action:</span>
+                              <span className="text-foreground font-medium capitalize">{scaraStatus.message?.action?.replace(/_/g, ' ')}</span>
+                            </div>
+                            <div className="flex justify-between">
+                              <span className="text-muted-foreground">Timestamp:</span>
+                              <span className="text-foreground font-medium">{new Date(scaraStatus.created_at).toLocaleString()}</span>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                      <div className="flex-1 flex flex-col gap-4 justify-center">
+                        <Button 
+                          onClick={handleScaraAction} 
+                          disabled={loading}
+                          className="w-full py-8 text-xl font-semibold"
+                        >
+                          {loading ? (
+                            <>
+                              <Loader2 className="mr-2 h-6 w-6 animate-spin" />
+                              Processing...
+                            </>
+                          ) : (
+                            "Start Picking"
                           )}
                         </Button>
                       </div>
