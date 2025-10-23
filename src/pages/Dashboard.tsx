@@ -214,7 +214,7 @@ const Dashboard = () => {
       let setStatus: ((data: any) => void) | null = null;
       
       if (controlName === "LOCKER") {
-        topic = "LOCKER";
+        topic = "1002222";
         setStatus = setLockerStatus;
       } else if (controlName === "CONVEYOR") {
         topic = "Conveyor";
@@ -341,7 +341,7 @@ const Dashboard = () => {
     setLoading(true);
     try {
       const response = await fetch(
-        'https://eventinternal.leapmile.com/pubsub/publish?topic=LOCKER',
+        'https://eventinternal.leapmile.com/pubsub/publish?topic=1002222',
         {
           method: 'POST',
           headers: {
