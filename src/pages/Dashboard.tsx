@@ -918,7 +918,7 @@ const Dashboard = () => {
                               Processing...
                             </>
                           ) : (
-                            "Action 1"
+                            "Retrieve"
                           )}
                         </Button>
                         <Button 
@@ -933,7 +933,7 @@ const Dashboard = () => {
                               Processing...
                             </>
                           ) : (
-                            "Action 2"
+                            "Release"
                           )}
                         </Button>
                       </div>

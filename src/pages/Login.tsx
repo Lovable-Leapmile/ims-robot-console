@@ -26,37 +26,25 @@ const Login = () => {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    try {
-      const response = await fetch(`https://robotmanagerv1test.qikpod.com/user/validate?user_phone=${phone}&password=${password}`, {
-        method: "GET",
-        headers: {
-          "accept": "application/json"
-        }
-      });
-      const data = await response.json();
-      if (data.status === "success" && data.statusbool) {
-        login(data.token, data.user_name, data.user_id);
-        toast({
-          title: "Login Successful",
-          description: `Welcome ${data.user_name}`
-        });
-        navigate("/dashboard");
-      } else {
-        toast({
-          title: "Invalid Credentials",
-          description: data.message || "Please check your phone number and password",
-          variant: "destructive"
-        });
-      }
-    } catch (error) {
+    
+    // Static validation
+    if (phone === "1234567890" && password === "567890") {
+      const staticToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhY2wiOiJhZG1pbiIsImV4cCI6MTkwMDY2MDExOX0.m9Rrmvbo22sJpWgTVynJLDIXFxOfym48F-kGy-wSKqQ";
+      login(staticToken, "Admin User", 1);
       toast({
-        title: "Login Failed",
-        description: "Unable to connect to the server. Please try again.",
+        title: "Login Successful",
+        description: "Welcome Admin User"
+      });
+      navigate("/dashboard");
+    } else {
+      toast({
+        title: "Invalid Credentials",
+        description: "Please check your phone number and password",
         variant: "destructive"
       });
-    } finally {
-      setIsLoading(false);
     }
+    
+    setIsLoading(false);
   };
   return <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/20 flex items-center justify-center p-4">
       <div className="w-full max-w-md animate-fade-in">
