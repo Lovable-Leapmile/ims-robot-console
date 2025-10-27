@@ -54,12 +54,6 @@ const features = [{
 }];
 
 const systemControls = [{
-  id: "amr-control",
-  name: "AMR",
-  icon: Cpu,
-  description: "Robot Control Actions",
-  gradient: "from-primary to-secondary"
-}, {
   id: "bay-door-control",
   name: "BAY DOOR",
   icon: DoorOpen,
@@ -271,39 +265,6 @@ const Dashboard = () => {
     }
   }, [drawerOpen]);
 
-  const handleAMRAction = async (action: "pick" | "drop") => {
-    if (!token) return;
-
-    setLoading(true);
-    try {
-      const response = await fetch(
-        'https://eventinternal.leapmile.com/pubsub/publish?topic=AMR_1',
-        {
-          method: 'POST',
-          headers: {
-            'accept': 'application/json',
-            'Authorization': `Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhY2wiOiJhZG1pbiIsImV4cCI6MTkwMDY2MDExOX0.m9Rrmvbo22sJpWgTVynJLDIXFxOfym48F-kGy-wSKqQ`,
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ action })
-        }
-      );
-      
-      const data = await response.json();
-      toast({
-        title: "AMR Action",
-        description: `${action.charAt(0).toUpperCase() + action.slice(1)} action executed successfully.`
-      });
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to execute action",
-        variant: "destructive"
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleBayDoorAction = async (action: "open_door" | "close_door") => {
     setLoading(true);
@@ -687,18 +648,6 @@ const Dashboard = () => {
             </div>)}
         </div>
 
-        <div className="text-center mb-4 animate-fade-in">
-          <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-1">Select System Control</h2>
-          <p className="text-sm text-muted-foreground">Choose a system to manage trays</p>
-        </div>
-
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-16">
-          {features.map((feature, index) => <div key={feature.id} className="animate-scale-in" style={{
-          animationDelay: `${index * 0.1}s`
-        }}>
-              <FeatureCard {...feature} onClick={() => handleSystemClick(feature.name)} />
-            </div>)}
-        </div>
 
         <Drawer open={drawerOpen} onOpenChange={setDrawerOpen}>
           <DrawerContent className="h-[65vh]">
@@ -741,39 +690,6 @@ const Dashboard = () => {
             <div className="flex flex-col h-full p-4 overflow-hidden">
               {isControlDrawer ? (
                 <>
-                  {selectedSystem === "AMR" && (
-                    <div className="flex-1 flex flex-col gap-4 justify-center">
-                      <Button 
-                        onClick={() => handleAMRAction("pick")} 
-                        disabled={loading}
-                        className="w-full py-8 text-xl font-semibold"
-                      >
-                        {loading ? (
-                          <>
-                            <Loader2 className="mr-2 h-6 w-6 animate-spin" />
-                            Processing...
-                          </>
-                        ) : (
-                          "Pick"
-                        )}
-                      </Button>
-                      <Button 
-                        onClick={() => handleAMRAction("drop")} 
-                        disabled={loading}
-                        className="w-full py-8 text-xl font-semibold"
-                        variant="secondary"
-                      >
-                        {loading ? (
-                          <>
-                            <Loader2 className="mr-2 h-6 w-6 animate-spin" />
-                            Processing...
-                          </>
-                        ) : (
-                          "Drop"
-                        )}
-                      </Button>
-                    </div>
-                  )}
                   {selectedSystem === "BAY DOOR" && (
                     <div className="flex-1 flex flex-col gap-4">
                       {bayDoorStatus && (
@@ -1129,13 +1045,6 @@ const Dashboard = () => {
           </DrawerContent>
         </Drawer>
 
-        <div className="fixed bottom-4 right-4 animate-fade-in" style={{
-        animationDelay: "0.6s"
-      }}>
-          <Button onClick={() => navigate("/stations")} className="bg-accent hover:bg-accent/90 text-accent-foreground font-semibold px-6 py-4 rounded-full shadow-2xl transition-all hover:scale-105 active:scale-95">
-            Stations
-          </Button>
-        </div>
       </div>
     </div>;
 };
