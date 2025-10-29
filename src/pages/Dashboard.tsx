@@ -167,7 +167,7 @@ const Dashboard = () => {
     console.log(`Fetching status for topic: ${topic}`);
     try {
       const response = await fetch(
-        `https://eventinternal.leapmile.com/pubsub/subscribe?topic=${topic}&num_records=1`,
+        `http://192.168.40.116/pubsub/subscribe?topic=${topic}&num_records=1`,
         {
           headers: {
             'accept': 'application/json',
@@ -270,7 +270,7 @@ const Dashboard = () => {
     setLoading(true);
     try {
       const response = await fetch(
-        'https://eventinternal.leapmile.com/pubsub/publish?topic=Bay',
+        'http://192.168.40.116/pubsub/publish?topic=Bay',
         {
           method: 'POST',
           headers: {
@@ -302,7 +302,7 @@ const Dashboard = () => {
     setLoading(true);
     try {
       const response = await fetch(
-        'https://eventinternal.leapmile.com/pubsub/publish?topic=1002222',
+        'http://192.168.40.116/pubsub/publish?topic=1002222',
         {
           method: 'POST',
           headers: {
@@ -334,7 +334,7 @@ const Dashboard = () => {
     setLoading(true);
     try {
       const response = await fetch(
-        'https://eventinternal.leapmile.com/pubsub/publish?topic=Conveyor',
+        'http://192.168.40.116/pubsub/publish?topic=Conveyor',
         {
           method: 'POST',
           headers: {
@@ -366,7 +366,7 @@ const Dashboard = () => {
     setLoading(true);
     try {
       const response = await fetch(
-        'https://eventinternal.leapmile.com/pubsub/publish?topic=SCISSOR_LIFT',
+        'http://192.168.40.116/pubsub/publish?topic=SCISSOR_LIFT',
         {
           method: 'POST',
           headers: {
@@ -398,7 +398,7 @@ const Dashboard = () => {
     setLoading(true);
     try {
       const response = await fetch(
-        'https://eventinternal.leapmile.com/pubsub/publish?topic=Shuttle',
+        'http://192.168.40.116/pubsub/publish?topic=Shuttle',
         {
           method: 'POST',
           headers: {
@@ -430,7 +430,7 @@ const Dashboard = () => {
     setLoading(true);
     try {
       const response = await fetch(
-        'https://eventinternal.leapmile.com/pubsub/publish?topic=Scara',
+        'http://192.168.40.116/pubsub/publish?topic=Scara',
         {
           method: 'POST',
           headers: {
