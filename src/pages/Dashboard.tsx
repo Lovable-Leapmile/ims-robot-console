@@ -105,6 +105,8 @@ const Dashboard = () => {
   const [shuttleStatus, setShuttleStatus] = useState<any>(null);
   const [scaraStatus, setScaraStatus] = useState<any>(null);
   const [statusInterval, setStatusInterval] = useState<NodeJS.Timeout | null>(null);
+  const [selectedShuttleControl, setSelectedShuttleControl] = useState<"tray" | "bin">("tray");
+  const [selectedScaraControl, setSelectedScaraControl] = useState<"tray">("tray");
 
   const fetchTrays = async () => {
     if (!token) return;
@@ -394,7 +396,7 @@ const Dashboard = () => {
     }
   };
 
-  const handleShuttleAction = async (action: "action1" | "action2") => {
+  const handleShuttleAction = async (action: "action1" | "action2" | "action3" | "action4") => {
     setLoading(true);
     try {
       const response = await fetch(
@@ -411,9 +413,15 @@ const Dashboard = () => {
       );
       
       const data = await response.json();
+      const actionNames = {
+        action1: "Retrieve tray",
+        action2: "Release tray",
+        action3: "Retrieve bin",
+        action4: "Release bin"
+      };
       toast({
         title: "Shuttle Action",
-        description: `Action ${action === "action1" ? "1" : "2"} executed successfully.`
+        description: `${actionNames[action]} executed successfully.`
       });
     } catch (error) {
       toast({
@@ -426,7 +434,7 @@ const Dashboard = () => {
     }
   };
 
-  const handleScaraAction = async () => {
+  const handleScaraAction = async (action: "action5" | "action6") => {
     setLoading(true);
     try {
       const response = await fetch(
@@ -438,14 +446,18 @@ const Dashboard = () => {
             'Authorization': `Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhY2wiOiJhZG1pbiIsImV4cCI6MTkwMDY2MDExOX0.m9Rrmvbo22sJpWgTVynJLDIXFxOfym48F-kGy-wSKqQ`,
             'Content-Type': 'application/json'
           },
-          body: JSON.stringify({ action: "start_picking" })
+          body: JSON.stringify({ action })
         }
       );
       
       const data = await response.json();
+      const actionNames = {
+        action5: "Retrieve tray",
+        action6: "Release tray"
+      };
       toast({
         title: "SCARA Action",
-        description: "Start picking action executed successfully."
+        description: `${actionNames[action]} executed successfully.`
       });
     } catch (error) {
       toast({
@@ -906,36 +918,88 @@ const Dashboard = () => {
                           </div>
                         </div>
                       )}
+                      <div className="flex gap-2 mb-4">
+                        <Button 
+                          onClick={() => setSelectedShuttleControl("tray")}
+                          variant={selectedShuttleControl === "tray" ? "default" : "outline"}
+                          className="flex-1"
+                        >
+                          Shuttle Tray
+                        </Button>
+                        <Button 
+                          onClick={() => setSelectedShuttleControl("bin")}
+                          variant={selectedShuttleControl === "bin" ? "default" : "outline"}
+                          className="flex-1"
+                        >
+                          Shuttle Bin
+                        </Button>
+                      </div>
                       <div className="flex-1 flex flex-col gap-4 justify-center">
-                        <Button 
-                          onClick={() => handleShuttleAction("action1")} 
-                          disabled={loading}
-                          className="w-full py-8 text-xl font-semibold"
-                        >
-                          {loading ? (
-                            <>
-                              <Loader2 className="mr-2 h-6 w-6 animate-spin" />
-                              Processing...
-                            </>
-                          ) : (
-                            "Retrieve"
-                          )}
-                        </Button>
-                        <Button 
-                          onClick={() => handleShuttleAction("action2")} 
-                          disabled={loading}
-                          className="w-full py-8 text-xl font-semibold"
-                          variant="secondary"
-                        >
-                          {loading ? (
-                            <>
-                              <Loader2 className="mr-2 h-6 w-6 animate-spin" />
-                              Processing...
-                            </>
-                          ) : (
-                            "Release"
-                          )}
-                        </Button>
+                        {selectedShuttleControl === "tray" ? (
+                          <>
+                            <Button 
+                              onClick={() => handleShuttleAction("action1")} 
+                              disabled={loading}
+                              className="w-full py-8 text-xl font-semibold"
+                            >
+                              {loading ? (
+                                <>
+                                  <Loader2 className="mr-2 h-6 w-6 animate-spin" />
+                                  Processing...
+                                </>
+                              ) : (
+                                "Retrieve tray"
+                              )}
+                            </Button>
+                            <Button 
+                              onClick={() => handleShuttleAction("action2")} 
+                              disabled={loading}
+                              className="w-full py-8 text-xl font-semibold"
+                              variant="secondary"
+                            >
+                              {loading ? (
+                                <>
+                                  <Loader2 className="mr-2 h-6 w-6 animate-spin" />
+                                  Processing...
+                                </>
+                              ) : (
+                                "Release tray"
+                              )}
+                            </Button>
+                          </>
+                        ) : (
+                          <>
+                            <Button 
+                              onClick={() => handleShuttleAction("action3")} 
+                              disabled={loading}
+                              className="w-full py-8 text-xl font-semibold"
+                            >
+                              {loading ? (
+                                <>
+                                  <Loader2 className="mr-2 h-6 w-6 animate-spin" />
+                                  Processing...
+                                </>
+                              ) : (
+                                "Retrieve bin"
+                              )}
+                            </Button>
+                            <Button 
+                              onClick={() => handleShuttleAction("action4")} 
+                              disabled={loading}
+                              className="w-full py-8 text-xl font-semibold"
+                              variant="secondary"
+                            >
+                              {loading ? (
+                                <>
+                                  <Loader2 className="mr-2 h-6 w-6 animate-spin" />
+                                  Processing...
+                                </>
+                              ) : (
+                                "Release bin"
+                              )}
+                            </Button>
+                          </>
+                        )}
                       </div>
                     </div>
                   )}
@@ -960,9 +1024,10 @@ const Dashboard = () => {
                           </div>
                         </div>
                       )}
+                      <h3 className="text-lg font-semibold text-foreground mb-2">Scara Tray</h3>
                       <div className="flex-1 flex flex-col gap-4 justify-center">
                         <Button 
-                          onClick={handleScaraAction} 
+                          onClick={() => handleScaraAction("action5")} 
                           disabled={loading}
                           className="w-full py-8 text-xl font-semibold"
                         >
@@ -972,7 +1037,22 @@ const Dashboard = () => {
                               Processing...
                             </>
                           ) : (
-                            "Start Picking"
+                            "Retrieve tray"
+                          )}
+                        </Button>
+                        <Button 
+                          onClick={() => handleScaraAction("action6")} 
+                          disabled={loading}
+                          className="w-full py-8 text-xl font-semibold"
+                          variant="secondary"
+                        >
+                          {loading ? (
+                            <>
+                              <Loader2 className="mr-2 h-6 w-6 animate-spin" />
+                              Processing...
+                            </>
+                          ) : (
+                            "Release tray"
                           )}
                         </Button>
                       </div>
