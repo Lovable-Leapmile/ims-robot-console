@@ -470,7 +470,7 @@ const Dashboard = () => {
     setLoading(true);
     try {
       const response = await fetch(
-        'https://eventinternal.leapmile.com/pubsub/publish?topic=Scara',
+        'https://eventinternal.leapmile.com/pubsub/publish?topic=Shuttle',
         {
           method: 'POST',
           headers: {
