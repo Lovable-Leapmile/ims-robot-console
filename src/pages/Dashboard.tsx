@@ -164,25 +164,6 @@ const Dashboard = () => {
     }
   };
 
-  const publishToTVEvent = async (action: string) => {
-    try {
-      await fetch(
-        'https://eventinternal.leapmile.com/pubsub/publish?topic=TV_EVENT',
-        {
-          method: 'POST',
-          headers: {
-            'accept': 'application/json',
-            'Authorization': `Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhY2wiOiJhZG1pbiIsImV4cCI6MTkwMDY2MDExOX0.m9Rrmvbo22sJpWgTVynJLDIXFxOfym48F-kGy-wSKqQ`,
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ action })
-        }
-      );
-    } catch (error) {
-      console.error('Failed to publish to TV_EVENT:', error);
-    }
-  };
-
   const fetchStatus = async (topic: string, setStatus: (data: any) => void) => {
     console.log(`Fetching status for topic: ${topic}`);
     try {
@@ -289,8 +270,6 @@ const Dashboard = () => {
   const handleBayDoorAction = async (action: "open_door" | "close_door") => {
     setLoading(true);
     try {
-      await publishToTVEvent("BAYDOOR");
-      
       const response = await fetch(
         'https://eventinternal.leapmile.com/pubsub/publish?topic=Bay',
         {
@@ -323,8 +302,6 @@ const Dashboard = () => {
   const handleLockerAction = async (action: "open" | "close") => {
     setLoading(true);
     try {
-      await publishToTVEvent("LOCKER");
-      
       const response = await fetch(
         'https://eventinternal.leapmile.com/pubsub/publish?topic=1002222',
         {
@@ -357,8 +334,6 @@ const Dashboard = () => {
   const handleConveyorAction = async (action: "eject" | "inject") => {
     setLoading(true);
     try {
-      await publishToTVEvent("CONVEYOR");
-      
       const response = await fetch(
         'https://eventinternal.leapmile.com/pubsub/publish?topic=Conveyor',
         {
@@ -391,8 +366,6 @@ const Dashboard = () => {
   const handleScissorLiftAction = async (action: "up" | "down") => {
     setLoading(true);
     try {
-      await publishToTVEvent("SCISSORLIFT");
-      
       const response = await fetch(
         'https://eventinternal.leapmile.com/pubsub/publish?topic=SCISSOR',
         {
@@ -425,8 +398,6 @@ const Dashboard = () => {
   const handleShuttleAction = async (action: "action1" | "action2" | "action3" | "action4") => {
     setLoading(true);
     try {
-      await publishToTVEvent("SHUTTLE");
-      
       const response = await fetch(
         'https://eventinternal.leapmile.com/pubsub/publish?topic=Shuttle',
         {
@@ -465,8 +436,6 @@ const Dashboard = () => {
   const handleScaraPickingAction = async () => {
     setLoading(true);
     try {
-      await publishToTVEvent("SCARA");
-      
       const response = await fetch(
         'https://eventinternal.leapmile.com/pubsub/publish?topic=Scara',
         {
