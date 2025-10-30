@@ -362,11 +362,11 @@ const Dashboard = () => {
     }
   };
 
-  const handleScissorLiftAction = async (action: "start" | "stop") => {
+  const handleScissorLiftAction = async (action: "up" | "down") => {
     setLoading(true);
     try {
       const response = await fetch(
-        'https://eventinternal.leapmile.com/pubsub/publish?topic=SCISSOR_LIFT',
+        'https://eventinternal.leapmile.com/pubsub/publish?topic=SCISSOR',
         {
           method: 'POST',
           headers: {
@@ -855,7 +855,7 @@ const Dashboard = () => {
                   {selectedSystem === "SCISSOR LIFT" && (
                     <div className="flex-1 flex flex-col gap-4 justify-center">
                       <Button 
-                        onClick={() => handleScissorLiftAction("start")} 
+                        onClick={() => handleScissorLiftAction("up")} 
                         disabled={loading}
                         className="w-full py-8 text-xl font-semibold"
                       >
@@ -865,11 +865,11 @@ const Dashboard = () => {
                             Processing...
                           </>
                         ) : (
-                          "Start"
+                          "Up"
                         )}
                       </Button>
                       <Button 
-                        onClick={() => handleScissorLiftAction("stop")} 
+                        onClick={() => handleScissorLiftAction("down")} 
                         disabled={loading}
                         className="w-full py-8 text-xl font-semibold"
                         variant="secondary"
@@ -880,7 +880,7 @@ const Dashboard = () => {
                             Processing...
                           </>
                         ) : (
-                          "Stop"
+                          "Down"
                         )}
                       </Button>
                     </div>
