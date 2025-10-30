@@ -106,7 +106,6 @@ const Dashboard = () => {
   const [scaraStatus, setScaraStatus] = useState<any>(null);
   const [statusInterval, setStatusInterval] = useState<NodeJS.Timeout | null>(null);
   const [selectedShuttleControl, setSelectedShuttleControl] = useState<"tray" | "bin">("tray");
-  const [selectedScaraTab, setSelectedScaraTab] = useState<"picking" | "tray">("picking");
 
   const fetchTrays = async () => {
     if (!token) return;
@@ -466,41 +465,6 @@ const Dashboard = () => {
     }
   };
 
-  const handleScaraTrayAction = async (action: "action5" | "action6") => {
-    setLoading(true);
-    try {
-      const response = await fetch(
-        'https://eventinternal.leapmile.com/pubsub/publish?topic=Shuttle',
-        {
-          method: 'POST',
-          headers: {
-            'accept': 'application/json',
-            'Authorization': `Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhY2wiOiJhZG1pbiIsImV4cCI6MTkwMDY2MDExOX0.m9Rrmvbo22sJpWgTVynJLDIXFxOfym48F-kGy-wSKqQ`,
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ action })
-        }
-      );
-      
-      const data = await response.json();
-      const actionNames = {
-        action5: "Retrieve tray",
-        action6: "Release tray"
-      };
-      toast({
-        title: "SCARA Action",
-        description: `${actionNames[action]} executed successfully.`
-      });
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to execute action",
-        variant: "destructive"
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
   const handleRequestTray = async () => {
     if (!token || !selectedTray) return;
 
@@ -1041,71 +1005,21 @@ const Dashboard = () => {
                           </div>
                         </div>
                       )}
-                      <div className="flex gap-2 mb-4">
-                        <Button 
-                          onClick={() => setSelectedScaraTab("picking")}
-                          variant={selectedScaraTab === "picking" ? "default" : "outline"}
-                          className="flex-1"
-                        >
-                          Item Picking
-                        </Button>
-                        <Button 
-                          onClick={() => setSelectedScaraTab("tray")}
-                          variant={selectedScaraTab === "tray" ? "default" : "outline"}
-                          className="flex-1"
-                        >
-                          Tray Control
-                        </Button>
-                      </div>
                       <div className="flex-1 flex flex-col gap-4 justify-center">
-                        {selectedScaraTab === "picking" ? (
-                          <Button 
-                            onClick={handleScaraPickingAction} 
-                            disabled={loading}
-                            className="w-full py-8 text-xl font-semibold"
-                          >
-                            {loading ? (
-                              <>
-                                <Loader2 className="mr-2 h-6 w-6 animate-spin" />
-                                Processing...
-                              </>
-                            ) : (
-                              "Start Picking"
-                            )}
-                          </Button>
-                        ) : (
-                          <>
-                            <Button 
-                              onClick={() => handleScaraTrayAction("action5")} 
-                              disabled={loading}
-                              className="w-full py-8 text-xl font-semibold"
-                            >
-                              {loading ? (
-                                <>
-                                  <Loader2 className="mr-2 h-6 w-6 animate-spin" />
-                                  Processing...
-                                </>
-                              ) : (
-                                "Retrieve tray"
-                              )}
-                            </Button>
-                            <Button 
-                              onClick={() => handleScaraTrayAction("action6")} 
-                              disabled={loading}
-                              className="w-full py-8 text-xl font-semibold"
-                              variant="secondary"
-                            >
-                              {loading ? (
-                                <>
-                                  <Loader2 className="mr-2 h-6 w-6 animate-spin" />
-                                  Processing...
-                                </>
-                              ) : (
-                                "Release tray"
-                              )}
-                            </Button>
-                          </>
-                        )}
+                        <Button 
+                          onClick={handleScaraPickingAction} 
+                          disabled={loading}
+                          className="w-full py-8 text-xl font-semibold"
+                        >
+                          {loading ? (
+                            <>
+                              <Loader2 className="mr-2 h-6 w-6 animate-spin" />
+                              Processing...
+                            </>
+                          ) : (
+                            "Start Picking"
+                          )}
+                        </Button>
                       </div>
                     </div>
                   )}
