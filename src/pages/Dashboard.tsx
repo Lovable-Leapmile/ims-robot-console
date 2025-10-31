@@ -167,7 +167,7 @@ const Dashboard = () => {
   const publishToTVEvent = async (action: string) => {
     try {
       await fetch(
-        'https://eventinternal.leapmile.com/pubsub/publish?topic=TV_EVENT',
+        'https://staging.qikpod.com/pubsub/publish?topic=TV_EVENT',
         {
           method: 'POST',
           headers: {
@@ -187,7 +187,7 @@ const Dashboard = () => {
     console.log(`Fetching status for topic: ${topic}`);
     try {
       const response = await fetch(
-        `https://eventinternal.leapmile.com/pubsub/subscribe?topic=${topic}&num_records=1`,
+        `https://staging.qikpod.com/pubsub/subscribe?topic=${topic}&num_records=1`,
         {
           headers: {
             'accept': 'application/json',
@@ -292,7 +292,7 @@ const Dashboard = () => {
       await publishToTVEvent("BAYDOOR");
       
       const response = await fetch(
-        'https://eventinternal.leapmile.com/pubsub/publish?topic=Bay',
+        'https://staging.qikpod.com/pubsub/publish?topic=Bay',
         {
           method: 'POST',
           headers: {
@@ -326,7 +326,7 @@ const Dashboard = () => {
       await publishToTVEvent("LOCKER");
       
       const response = await fetch(
-        'https://eventinternal.leapmile.com/pubsub/publish?topic=1002222',
+        'https://staging.qikpod.com/pubsub/publish?topic=1002222',
         {
           method: 'POST',
           headers: {
@@ -360,7 +360,7 @@ const Dashboard = () => {
       await publishToTVEvent("CONVEYOR");
       
       const response = await fetch(
-        'https://eventinternal.leapmile.com/pubsub/publish?topic=Conveyor',
+        'https://staging.qikpod.com/pubsub/publish?topic=Conveyor',
         {
           method: 'POST',
           headers: {
@@ -394,7 +394,7 @@ const Dashboard = () => {
       await publishToTVEvent("SCISSORLIFT");
       
       const response = await fetch(
-        'https://eventinternal.leapmile.com/pubsub/publish?topic=SCISSOR',
+        'https://staging.qikpod.com/pubsub/publish?topic=SCISSOR',
         {
           method: 'POST',
           headers: {
@@ -428,7 +428,7 @@ const Dashboard = () => {
       await publishToTVEvent("SHUTTLE");
       
       const response = await fetch(
-        'https://eventinternal.leapmile.com/pubsub/publish?topic=Shuttle',
+        'https://staging.qikpod.com/pubsub/publish?topic=Shuttle',
         {
           method: 'POST',
           headers: {
@@ -468,7 +468,7 @@ const Dashboard = () => {
       await publishToTVEvent("SCARA");
       
       const response = await fetch(
-        'https://eventinternal.leapmile.com/pubsub/publish?topic=Scara',
+        'https://staging.qikpod.com/pubsub/publish?topic=Scara',
         {
           method: 'POST',
           headers: {
