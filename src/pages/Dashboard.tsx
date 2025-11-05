@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Cpu, Boxes, DoorOpen, MoveVertical, Lock, Cuboid, LogOut, Loader2, Truck, Cog } from "lucide-react";
+import { Cpu, Boxes, DoorOpen, MoveVertical, Lock, Cuboid, LogOut, Loader2, Truck, Cog, MapPin } from "lucide-react";
 import FeatureCard from "@/components/FeatureCard";
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from "@/components/ui/drawer";
 import { toast } from "@/hooks/use-toast";
@@ -54,6 +54,12 @@ const features = [{
 }];
 
 const systemControls = [{
+  id: "amr-control",
+  name: "AMR",
+  icon: MapPin,
+  description: "AMR Map Controls",
+  gradient: "from-primary to-secondary"
+}, {
   id: "bay-door-control",
   name: "BAY DOOR",
   icon: DoorOpen,
@@ -104,6 +110,7 @@ const Dashboard = () => {
   const [bayDoorStatus, setBayDoorStatus] = useState<any>(null);
   const [shuttleStatus, setShuttleStatus] = useState<any>(null);
   const [scaraStatus, setScaraStatus] = useState<any>(null);
+  const [amrStatus, setAmrStatus] = useState<any>(null);
   const [statusInterval, setStatusInterval] = useState<NodeJS.Timeout | null>(null);
   const [selectedShuttleControl, setSelectedShuttleControl] = useState<"tray" | "bin">("tray");
 
@@ -227,7 +234,10 @@ const Dashboard = () => {
       let topic = '';
       let setStatus: ((data: any) => void) | null = null;
       
-      if (controlName === "LOCKER") {
+      if (controlName === "AMR") {
+        topic = "AMR_MAP";
+        setStatus = setAmrStatus;
+      } else if (controlName === "LOCKER") {
         topic = "1002222";
         setStatus = setLockerStatus;
       } else if (controlName === "CONVEYOR") {
@@ -250,8 +260,8 @@ const Dashboard = () => {
         // Initial fetch
         await fetchStatus(topic, setStatus);
         
-        // Set up interval for Conveyor, Bay Door, Shuttle, and Scara
-        if (controlName === "CONVEYOR" || controlName === "BAY DOOR" || controlName === "SHUTTLE" || controlName === "SCARA") {
+        // Set up interval for AMR, Conveyor, Bay Door, Shuttle, and Scara
+        if (controlName === "AMR" || controlName === "CONVEYOR" || controlName === "BAY DOOR" || controlName === "SHUTTLE" || controlName === "SCARA") {
           console.log(`Starting 3-second interval for ${controlName}`);
           const interval = setInterval(() => {
             console.log(`Interval tick for ${controlName}`);
@@ -496,6 +506,41 @@ const Dashboard = () => {
     }
   };
 
+  const handleAmrAction = async (actionData: any) => {
+    setLoading(true);
+    try {
+      await publishToTVEvent("AMR");
+      
+      const response = await fetch(
+        'https://staging.qikpod.com/pubsub/publish?topic=AMR_MAP',
+        {
+          method: 'POST',
+          headers: {
+            'accept': 'application/json',
+            'Authorization': `Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhY2wiOiJhZG1pbiIsImV4cCI6MTkwMDY2MDExOX0.m9Rrmvbo22sJpWgTVynJLDIXFxOfym48F-kGy-wSKqQ`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(actionData)
+        }
+      );
+      
+      const data = await response.json();
+      const actionKey = Object.keys(actionData)[0];
+      toast({
+        title: "AMR Action",
+        description: `Sequence ${actionKey} executed successfully.`
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to execute action",
+        variant: "destructive"
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleRequestTray = async () => {
     if (!token || !selectedTray) return;
 
@@ -692,6 +737,12 @@ const Dashboard = () => {
           <DrawerContent className="h-[65vh]">
             <DrawerHeader className="border-b pb-4">
               <DrawerTitle className="text-xl font-bold flex items-center gap-2">
+                {isControlDrawer && selectedSystem === "AMR" && (
+                  <>
+                    <MapPin className="h-6 w-6" />
+                    AMR Controls
+                  </>
+                )}
                 {isControlDrawer && selectedSystem === "LOCKER" && (
                   <>
                     <Lock className="h-6 w-6" />
@@ -726,9 +777,122 @@ const Dashboard = () => {
               </DrawerTitle>
             </DrawerHeader>
             
-            <div className="flex flex-col h-full p-4 overflow-hidden">
+            <div className="flex flex-col h-full overflow-y-auto p-4">
               {isControlDrawer ? (
                 <>
+                  {selectedSystem === "AMR" && (
+                    <div className="flex-1 flex flex-col gap-4">
+                      {amrStatus && (
+                        <div className="bg-card border-2 border-border rounded-lg p-4 mb-4">
+                          <h3 className="text-lg font-semibold text-foreground mb-3">Current Status</h3>
+                          <div className="space-y-2 text-sm">
+                            <div className="flex justify-between">
+                              <span className="text-muted-foreground">Topic:</span>
+                              <span className="text-foreground font-medium">{amrStatus.topic}</span>
+                            </div>
+                            <div className="flex justify-between">
+                              <span className="text-muted-foreground">Last Action:</span>
+                              <span className="text-foreground font-medium">{JSON.stringify(amrStatus.message)}</span>
+                            </div>
+                            <div className="flex justify-between">
+                              <span className="text-muted-foreground">Timestamp:</span>
+                              <span className="text-foreground font-medium">{new Date(amrStatus.created_at).toLocaleString()}</span>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                      <div className="grid grid-cols-2 gap-3">
+                        <Button 
+                          onClick={() => handleAmrAction({"1": ["L", "M"]})} 
+                          disabled={loading}
+                          className="w-full py-6 text-lg font-semibold"
+                        >
+                          {loading ? (
+                            <>
+                              <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                              Processing...
+                            </>
+                          ) : (
+                            "Sequence 1"
+                          )}
+                        </Button>
+                        <Button 
+                          onClick={() => handleAmrAction({"2": ["L", "M", "R", "L", "D", "R"]})} 
+                          disabled={loading}
+                          className="w-full py-6 text-lg font-semibold"
+                          variant="secondary"
+                        >
+                          {loading ? (
+                            <>
+                              <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                              Processing...
+                            </>
+                          ) : (
+                            "Sequence 2"
+                          )}
+                        </Button>
+                        <Button 
+                          onClick={() => handleAmrAction({"3": ["J", "K"]})} 
+                          disabled={loading}
+                          className="w-full py-6 text-lg font-semibold"
+                          variant="outline"
+                        >
+                          {loading ? (
+                            <>
+                              <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                              Processing...
+                            </>
+                          ) : (
+                            "Sequence 3"
+                          )}
+                        </Button>
+                        <Button 
+                          onClick={() => handleAmrAction({"4": ["E"]})} 
+                          disabled={loading}
+                          className="w-full py-6 text-lg font-semibold"
+                        >
+                          {loading ? (
+                            <>
+                              <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                              Processing...
+                            </>
+                          ) : (
+                            "Start"
+                          )}
+                        </Button>
+                        <Button 
+                          onClick={() => handleAmrAction({"5": ["X"]})} 
+                          disabled={loading}
+                          className="w-full py-6 text-lg font-semibold"
+                          variant="destructive"
+                        >
+                          {loading ? (
+                            <>
+                              <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                              Processing...
+                            </>
+                          ) : (
+                            "Stop"
+                          )}
+                        </Button>
+                        <Button 
+                          onClick={() => handleAmrAction({"6": ["LOOP"]})} 
+                          disabled={loading}
+                          className="w-full py-6 text-lg font-semibold"
+                          variant="secondary"
+                        >
+                          {loading ? (
+                            <>
+                              <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                              Processing...
+                            </>
+                          ) : (
+                            "Loop"
+                          )}
+                        </Button>
+                      </div>
+                    </div>
+                  )}
                   {selectedSystem === "BAY DOOR" && (
                     <div className="flex-1 flex flex-col gap-4">
                       {bayDoorStatus && (
