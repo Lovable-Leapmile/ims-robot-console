@@ -45,7 +45,7 @@ const Stations = () => {
     trayItemMapRef.current.set(tray.tray_id, itemId);
     
     try {
-      await fetch('https://staging.qikpod.com/pubsub/publish?topic=pick_item_id', {
+      await fetch('https://eventinternal.leapmile.com/pubsub/publish?topic=pick_item_id', {
         method: 'POST',
         headers: {
           'accept': 'application/json',
