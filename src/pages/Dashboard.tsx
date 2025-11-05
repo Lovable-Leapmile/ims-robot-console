@@ -803,7 +803,7 @@ const Dashboard = () => {
                       )}
                       <div className="grid grid-cols-2 gap-3">
                         <Button 
-                          onClick={() => handleAmrAction({"1": ["L", "M"]})} 
+                          onClick={() => handleAmrAction({"commands": ["L", "M"]})} 
                           disabled={loading}
                           className="w-full py-6 text-lg font-semibold"
                         >
@@ -817,7 +817,7 @@ const Dashboard = () => {
                           )}
                         </Button>
                         <Button 
-                          onClick={() => handleAmrAction({"2": ["L", "M", "R", "L", "D", "R"]})} 
+                          onClick={() => handleAmrAction({"commands": ["L", "M", "R", "L", "D", "R"]})} 
                           disabled={loading}
                           className="w-full py-6 text-lg font-semibold"
                           variant="secondary"
@@ -832,7 +832,7 @@ const Dashboard = () => {
                           )}
                         </Button>
                         <Button 
-                          onClick={() => handleAmrAction({"3": ["J", "K"]})} 
+                          onClick={() => handleAmrAction({"commands": ["J", "K"]})} 
                           disabled={loading}
                           className="w-full py-6 text-lg font-semibold"
                           variant="outline"
@@ -847,7 +847,7 @@ const Dashboard = () => {
                           )}
                         </Button>
                         <Button 
-                          onClick={() => handleAmrAction({"4": ["E"]})} 
+                          onClick={() => handleAmrAction({"commands": ["E"]})} 
                           disabled={loading}
                           className="w-full py-6 text-lg font-semibold"
                         >
@@ -861,7 +861,7 @@ const Dashboard = () => {
                           )}
                         </Button>
                         <Button 
-                          onClick={() => handleAmrAction({"5": ["X"]})} 
+                          onClick={() => handleAmrAction({"commands": ["X"]})} 
                           disabled={loading}
                           className="w-full py-6 text-lg font-semibold"
                           variant="destructive"
@@ -876,7 +876,7 @@ const Dashboard = () => {
                           )}
                         </Button>
                         <Button 
-                          onClick={() => handleAmrAction({"6": ["LOOP"]})} 
+                          onClick={() => handleAmrAction({"commands": ["LOOP"]})} 
                           disabled={loading}
                           className="w-full py-6 text-lg font-semibold"
                           variant="secondary"
