@@ -813,7 +813,7 @@ const Dashboard = () => {
                               Processing...
                             </>
                           ) : (
-                            "Sequence 1"
+                            "1"
                           )}
                         </Button>
                         <Button 
@@ -828,7 +828,7 @@ const Dashboard = () => {
                               Processing...
                             </>
                           ) : (
-                            "Sequence 2"
+                            "2"
                           )}
                         </Button>
                         <Button 
@@ -843,7 +843,7 @@ const Dashboard = () => {
                               Processing...
                             </>
                           ) : (
-                            "Sequence 3"
+                            "3"
                           )}
                         </Button>
                         <Button 
@@ -857,7 +857,7 @@ const Dashboard = () => {
                               Processing...
                             </>
                           ) : (
-                            "Start"
+                            "4"
                           )}
                         </Button>
                         <Button 
@@ -872,7 +872,7 @@ const Dashboard = () => {
                               Processing...
                             </>
                           ) : (
-                            "Stop"
+                            "5"
                           )}
                         </Button>
                         <Button 
@@ -887,7 +887,7 @@ const Dashboard = () => {
                               Processing...
                             </>
                           ) : (
-                            "Loop"
+                            "6"
                           )}
                         </Button>
                       </div>
