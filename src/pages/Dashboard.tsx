@@ -299,8 +299,6 @@ const Dashboard = () => {
   const handleBayDoorAction = async (action: "open_door" | "close_door") => {
     setLoading(true);
     try {
-      await publishToTVEvent("BAYDOOR");
-      
       const response = await fetch(
         'https://eventinternal.leapmile.com/pubsub/publish?topic=Bay',
         {
@@ -333,8 +331,6 @@ const Dashboard = () => {
   const handleLockerAction = async (action: "open" | "close") => {
     setLoading(true);
     try {
-      await publishToTVEvent("LOCKER");
-      
       const response = await fetch(
         'https://eventinternal.leapmile.com/pubsub/publish?topic=1002222',
         {
@@ -367,8 +363,6 @@ const Dashboard = () => {
   const handleConveyorAction = async (action: "eject" | "inject") => {
     setLoading(true);
     try {
-      await publishToTVEvent("CONVEYOR");
-      
       const response = await fetch(
         'https://eventinternal.leapmile.com/pubsub/publish?topic=Conveyor',
         {
@@ -401,8 +395,6 @@ const Dashboard = () => {
   const handleScissorLiftAction = async (action: "up" | "down") => {
     setLoading(true);
     try {
-      await publishToTVEvent("SCISSORLIFT");
-      
       const response = await fetch(
         'https://eventinternal.leapmile.com/pubsub/publish?topic=SCISSOR',
         {
@@ -435,8 +427,6 @@ const Dashboard = () => {
   const handleShuttleAction = async (action: "action1" | "action2" | "action3" | "action4") => {
     setLoading(true);
     try {
-      await publishToTVEvent("SHUTTLE");
-      
       const response = await fetch(
         'https://eventinternal.leapmile.com/pubsub/publish?topic=Shuttle',
         {
@@ -475,8 +465,6 @@ const Dashboard = () => {
   const handleScaraPickingAction = async () => {
     setLoading(true);
     try {
-      await publishToTVEvent("SCARA");
-      
       const response = await fetch(
         'https://eventinternal.leapmile.com/pubsub/publish?topic=Scara',
         {
@@ -509,8 +497,6 @@ const Dashboard = () => {
   const handleAmrAction = async (actionData: any) => {
     setLoading(true);
     try {
-      await publishToTVEvent("AMR");
-      
       const response = await fetch(
         'https://eventinternal.leapmile.com/pubsub/publish?topic=AMR_MAP',
         {
