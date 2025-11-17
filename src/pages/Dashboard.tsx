@@ -15,87 +15,102 @@ interface Tray {
   tray_weight: number;
   tray_divider: number;
 }
-const features = [{
-  id: "amr",
-  name: "AMR",
-  icon: Cpu,
-  description: "Autonomous Mobile Robots",
-  gradient: "from-primary to-secondary"
-}, {
-  id: "scara",
-  name: "SCARA",
-  icon: Boxes,
-  description: "Selective Compliance Robot Arm",
-  gradient: "from-secondary to-accent"
-}, {
-  id: "bay-door",
-  name: "BAY DOOR",
-  icon: DoorOpen,
-  description: "Automated Bay Door Control",
-  gradient: "from-accent to-primary"
-}, {
-  id: "scissor-lift",
-  name: "SCISSOR LIFT",
-  icon: MoveVertical,
-  description: "Vertical Material Handling",
-  gradient: "from-primary to-accent"
-}, {
-  id: "locker",
-  name: "LOCKER",
-  icon: Lock,
-  description: "Smart Storage Solutions",
-  gradient: "from-secondary to-primary"
-}, {
-  id: "conveyor",
-  name: "CONVEYOR",
-  icon: Cuboid,
-  description: "Belt Conveyor System",
-  gradient: "from-accent to-secondary"
-}];
+const features = [
+  {
+    id: "amr",
+    name: "AMR",
+    icon: Cpu,
+    description: "Autonomous Mobile Robots",
+    gradient: "from-primary to-secondary",
+  },
+  {
+    id: "scara",
+    name: "SCARA",
+    icon: Boxes,
+    description: "Selective Compliance Robot Arm",
+    gradient: "from-secondary to-accent",
+  },
+  {
+    id: "bay-door",
+    name: "BAY DOOR",
+    icon: DoorOpen,
+    description: "Automated Bay Door Control",
+    gradient: "from-accent to-primary",
+  },
+  {
+    id: "scissor-lift",
+    name: "SCISSOR LIFT",
+    icon: MoveVertical,
+    description: "Vertical Material Handling",
+    gradient: "from-primary to-accent",
+  },
+  {
+    id: "locker",
+    name: "LOCKER",
+    icon: Lock,
+    description: "Smart Storage Solutions",
+    gradient: "from-secondary to-primary",
+  },
+  {
+    id: "conveyor",
+    name: "CONVEYOR",
+    icon: Cuboid,
+    description: "Belt Conveyor System",
+    gradient: "from-accent to-secondary",
+  },
+];
 
-const systemControls = [{
-  id: "amr-control",
-  name: "AMR",
-  icon: MapPin,
-  description: "AMR Map Controls",
-  gradient: "from-primary to-secondary"
-}, {
-  id: "bay-door-control",
-  name: "BAY DOOR",
-  icon: DoorOpen,
-  description: "Door Control Actions",
-  gradient: "from-accent to-primary"
-}, {
-  id: "locker-control",
-  name: "LOCKER",
-  icon: Lock,
-  description: "Locker Control Actions",
-  gradient: "from-secondary to-primary"
-}, {
-  id: "conveyor-control",
-  name: "CONVEYOR",
-  icon: Cuboid,
-  description: "Belt Control Actions",
-  gradient: "from-accent to-secondary"
-}, {
-  id: "scissor-lift-control",
-  name: "SCISSOR LIFT",
-  icon: MoveVertical,
-  description: "Lift Control Actions",
-  gradient: "from-primary to-accent"
-}, {
-  id: "shuttle-control",
-  name: "SHUTTLE",
-  icon: Truck,
-  description: "Shuttle Control Actions",
-  gradient: "from-secondary to-accent"
-}, {
-  id: "scara-control",
-  name: "SCARA",
-  icon: Cog,
-  description: "SCARA Control Actions",
-  gradient: "from-primary to-secondary"
-}];
+const systemControls = [
+  {
+    id: "amr-control",
+    name: "AMR",
+    icon: MapPin,
+    description: "AMR Map Controls",
+    gradient: "from-primary to-secondary",
+  },
+  {
+    id: "bay-door-control",
+    name: "BAY DOOR",
+    icon: DoorOpen,
+    description: "Door Control Actions",
+    gradient: "from-accent to-primary",
+  },
+  {
+    id: "locker-control",
+    name: "LOCKER",
+    icon: Lock,
+    description: "Locker Control Actions",
+    gradient: "from-secondary to-primary",
+  },
+  {
+    id: "conveyor-control",
+    name: "CONVEYOR",
+    icon: Cuboid,
+    description: "Belt Control Actions",
+    gradient: "from-accent to-secondary",
+  },
+  {
+    id: "scissor-lift-control",
+    name: "SCISSOR LIFT",
+    icon: MoveVertical,
+    description: "Lift Control Actions",
+    gradient: "from-primary to-accent",
+  },
+  {
+    id: "shuttle-control",
+    name: "SHUTTLE",
+    icon: Truck,
+    description: "Shuttle Control Actions",
+    gradient: "from-secondary to-accent",
+  },
+  {
+    id: "scara-control",
+    name: "SCARA",
+    icon: Cog,
+    description: "SCARA Control Actions",
+    gradient: "from-primary to-secondary",
+  },
+];
 const Dashboard = () => {
   const navigate = useNavigate();
   const { logout, token } = useAuth();
@@ -116,34 +131,34 @@ const Dashboard = () => {
 
   const fetchTrays = async () => {
     if (!token) return;
-    
+
     setLoading(true);
     try {
       const response = await fetch(
-        'https://robotmanagerv1test.qikpod.com/robotmanager/trays?tray_status=active&order_by_field=updated_at&order_by_type=DESC',
+        "https://robotmanagerv1test.qikpod.com/robotmanager/trays?tray_status=active&order_by_field=updated_at&order_by_type=DESC",
         {
           headers: {
-            'accept': 'application/json',
-            'Authorization': `Bearer ${token}`
-          }
-        }
+            accept: "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        },
       );
-      
+
       const data = await response.json();
-      if (data.status === 'success') {
+      if (data.status === "success") {
         setTrays(data.records);
       } else {
         toast({
           title: "Error",
           description: "Failed to fetch trays",
-          variant: "destructive"
+          variant: "destructive",
         });
       }
     } catch (error) {
       toast({
         title: "Error",
         description: "Failed to connect to server",
-        variant: "destructive"
+        variant: "destructive",
       });
     } finally {
       setLoading(false);
@@ -155,7 +170,7 @@ const Dashboard = () => {
     setSelectedTray("");
     setIsControlDrawer(false);
     setDrawerOpen(true);
-    
+
     if (systemName === "SCARA") {
       // Show dummy items for SCARA
       setTrays([
@@ -173,36 +188,30 @@ const Dashboard = () => {
 
   const publishToTVEvent = async (action: string) => {
     try {
-      await fetch(
-        'https://eventinternal.leapmile.com/pubsub/publish?topic=TV_EVENT',
-        {
-          method: 'POST',
-          headers: {
-            'accept': 'application/json',
-            'Authorization': `Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhY2wiOiJhZG1pbiIsImV4cCI6MTkwMDY2MDExOX0.m9Rrmvbo22sJpWgTVynJLDIXFxOfym48F-kGy-wSKqQ`,
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ action })
-        }
-      );
+      await fetch("https://eventinternal.leapmile.com/pubsub/publish?topic=TV_EVENT", {
+        method: "POST",
+        headers: {
+          accept: "application/json",
+          Authorization: `Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhY2wiOiJhZG1pbiIsImV4cCI6MTkwMDY2MDExOX0.m9Rrmvbo22sJpWgTVynJLDIXFxOfym48F-kGy-wSKqQ`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ action }),
+      });
     } catch (error) {
-      console.error('Failed to publish to TV_EVENT:', error);
+      console.error("Failed to publish to TV_EVENT:", error);
     }
   };
 
   const fetchStatus = async (topic: string, setStatus: (data: any) => void) => {
     console.log(`Fetching status for topic: ${topic}`);
     try {
-      const response = await fetch(
-        `https://eventinternal.leapmile.com/pubsub/subscribe?topic=${topic}&num_records=1`,
-        {
-          headers: {
-            'accept': 'application/json',
-            'Authorization': `Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhY2wiOiJhZG1pbiIsImV4cCI6MTkwMDY2MDExOX0.m9Rrmvbo22sJpWgTVynJLDIXFxOfym48F-kGy-wSKqQ`
-          }
-        }
-      );
-      
+      const response = await fetch(`https://eventinternal.leapmile.com/pubsub/subscribe?topic=${topic}&num_records=1`, {
+        headers: {
+          accept: "application/json",
+          Authorization: `Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhY2wiOiJhZG1pbiIsImV4cCI6MTkwMDY2MDExOX0.m9Rrmvbo22sJpWgTVynJLDIXFxOfym48F-kGy-wSKqQ`,
+        },
+      });
+
       const data = await response.json();
       console.log(`Status data for ${topic}:`, data);
       if (data.records && data.records.length > 0) {
@@ -221,19 +230,19 @@ const Dashboard = () => {
     setSelectedSystem(controlName);
     setIsControlDrawer(true);
     setDrawerOpen(true);
-    
+
     // Clear existing interval if any
     if (statusInterval) {
-      console.log('Clearing existing interval');
+      console.log("Clearing existing interval");
       clearInterval(statusInterval);
       setStatusInterval(null);
     }
-    
+
     setLoading(true);
     try {
-      let topic = '';
+      let topic = "";
       let setStatus: ((data: any) => void) | null = null;
-      
+
       if (controlName === "AMR") {
         topic = "AMR_MAP";
         setStatus = setAmrStatus;
@@ -253,15 +262,21 @@ const Dashboard = () => {
         topic = "Scara";
         setStatus = setScaraStatus;
       }
-      
+
       if (topic && setStatus) {
         console.log(`Setting up polling for ${controlName} with topic ${topic}`);
-        
+
         // Initial fetch
         await fetchStatus(topic, setStatus);
-        
+
         // Set up interval for AMR, Conveyor, Bay Door, Shuttle, and Scara
-        if (controlName === "AMR" || controlName === "CONVEYOR" || controlName === "BAY DOOR" || controlName === "SHUTTLE" || controlName === "SCARA") {
+        if (
+          controlName === "AMR" ||
+          controlName === "CONVEYOR" ||
+          controlName === "BAY DOOR" ||
+          controlName === "SHUTTLE" ||
+          controlName === "SCARA"
+        ) {
           console.log(`Starting 3-second interval for ${controlName}`);
           const interval = setInterval(() => {
             console.log(`Interval tick for ${controlName}`);
@@ -281,7 +296,7 @@ const Dashboard = () => {
   useEffect(() => {
     return () => {
       if (statusInterval) {
-        console.log('Cleanup: Clearing interval on unmount or drawer close');
+        console.log("Cleanup: Clearing interval on unmount or drawer close");
         clearInterval(statusInterval);
       }
     };
@@ -289,39 +304,35 @@ const Dashboard = () => {
 
   useEffect(() => {
     if (!drawerOpen && statusInterval) {
-      console.log('Drawer closed, clearing interval');
+      console.log("Drawer closed, clearing interval");
       clearInterval(statusInterval);
       setStatusInterval(null);
     }
   }, [drawerOpen]);
 
-
   const handleBayDoorAction = async (action: "open_door" | "close_door") => {
     setLoading(true);
     try {
-      const response = await fetch(
-        'https://eventinternal.leapmile.com/pubsub/publish?topic=Bay',
-        {
-          method: 'POST',
-          headers: {
-            'accept': 'application/json',
-            'Authorization': `Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhY2wiOiJhZG1pbiIsImV4cCI6MTkwMDY2MDExOX0.m9Rrmvbo22sJpWgTVynJLDIXFxOfym48F-kGy-wSKqQ`,
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ action })
-        }
-      );
-      
+      const response = await fetch("https://eventinternal.leapmile.com/pubsub/publish?topic=Bay", {
+        method: "POST",
+        headers: {
+          accept: "application/json",
+          Authorization: `Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhY2wiOiJhZG1pbiIsImV4cCI6MTkwMDY2MDExOX0.m9Rrmvbo22sJpWgTVynJLDIXFxOfym48F-kGy-wSKqQ`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ action }),
+      });
+
       const data = await response.json();
       toast({
         title: "Bay Door Action",
-        description: `${action.charAt(0).toUpperCase() + action.slice(1)} action executed successfully.`
+        description: `${action.charAt(0).toUpperCase() + action.slice(1)} action executed successfully.`,
       });
     } catch (error) {
       toast({
         title: "Error",
         description: "Failed to execute action",
-        variant: "destructive"
+        variant: "destructive",
       });
     } finally {
       setLoading(false);
@@ -331,29 +342,26 @@ const Dashboard = () => {
   const handleLockerAction = async (action: "open" | "close") => {
     setLoading(true);
     try {
-      const response = await fetch(
-        'https://eventinternal.leapmile.com/pubsub/publish?topic=1002222',
-        {
-          method: 'POST',
-          headers: {
-            'accept': 'application/json',
-            'Authorization': `Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhY2wiOiJhZG1pbiIsImV4cCI6MTkwMDY2MDExOX0.m9Rrmvbo22sJpWgTVynJLDIXFxOfym48F-kGy-wSKqQ`,
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ action })
-        }
-      );
-      
+      const response = await fetch("https://eventinternal.leapmile.com/pubsub/publish?topic=1002222", {
+        method: "POST",
+        headers: {
+          accept: "application/json",
+          Authorization: `Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhY2wiOiJhZG1pbiIsImV4cCI6MTkwMDY2MDExOX0.m9Rrmvbo22sJpWgTVynJLDIXFxOfym48F-kGy-wSKqQ`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ action }),
+      });
+
       const data = await response.json();
       toast({
         title: "Locker Action",
-        description: `${action.charAt(0).toUpperCase() + action.slice(1)} action executed successfully.`
+        description: `${action.charAt(0).toUpperCase() + action.slice(1)} action executed successfully.`,
       });
     } catch (error) {
       toast({
         title: "Error",
         description: "Failed to execute action",
-        variant: "destructive"
+        variant: "destructive",
       });
     } finally {
       setLoading(false);
@@ -363,29 +371,26 @@ const Dashboard = () => {
   const handleConveyorAction = async (action: "eject" | "inject") => {
     setLoading(true);
     try {
-      const response = await fetch(
-        'https://eventinternal.leapmile.com/pubsub/publish?topic=Conveyor',
-        {
-          method: 'POST',
-          headers: {
-            'accept': 'application/json',
-            'Authorization': `Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhY2wiOiJhZG1pbiIsImV4cCI6MTkwMDY2MDExOX0.m9Rrmvbo22sJpWgTVynJLDIXFxOfym48F-kGy-wSKqQ`,
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ action })
-        }
-      );
-      
+      const response = await fetch("https://eventinternal.leapmile.com/pubsub/publish?topic=Conveyor", {
+        method: "POST",
+        headers: {
+          accept: "application/json",
+          Authorization: `Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhY2wiOiJhZG1pbiIsImV4cCI6MTkwMDY2MDExOX0.m9Rrmvbo22sJpWgTVynJLDIXFxOfym48F-kGy-wSKqQ`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ action }),
+      });
+
       const data = await response.json();
       toast({
         title: "Conveyor Action",
-        description: `${action.charAt(0).toUpperCase() + action.slice(1)} action executed successfully.`
+        description: `${action.charAt(0).toUpperCase() + action.slice(1)} action executed successfully.`,
       });
     } catch (error) {
       toast({
         title: "Error",
         description: "Failed to execute action",
-        variant: "destructive"
+        variant: "destructive",
       });
     } finally {
       setLoading(false);
@@ -395,29 +400,26 @@ const Dashboard = () => {
   const handleScissorLiftAction = async (action: "up" | "down") => {
     setLoading(true);
     try {
-      const response = await fetch(
-        'https://eventinternal.leapmile.com/pubsub/publish?topic=SCISSOR',
-        {
-          method: 'POST',
-          headers: {
-            'accept': 'application/json',
-            'Authorization': `Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhY2wiOiJhZG1pbiIsImV4cCI6MTkwMDY2MDExOX0.m9Rrmvbo22sJpWgTVynJLDIXFxOfym48F-kGy-wSKqQ`,
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ action })
-        }
-      );
-      
+      const response = await fetch("https://eventinternal.leapmile.com/pubsub/publish?topic=SCISSOR", {
+        method: "POST",
+        headers: {
+          accept: "application/json",
+          Authorization: `Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhY2wiOiJhZG1pbiIsImV4cCI6MTkwMDY2MDExOX0.m9Rrmvbo22sJpWgTVynJLDIXFxOfym48F-kGy-wSKqQ`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ action }),
+      });
+
       const data = await response.json();
       toast({
         title: "Scissor Lift Action",
-        description: `${action.charAt(0).toUpperCase() + action.slice(1)} action executed successfully.`
+        description: `${action.charAt(0).toUpperCase() + action.slice(1)} action executed successfully.`,
       });
     } catch (error) {
       toast({
         title: "Error",
         description: "Failed to execute action",
-        variant: "destructive"
+        variant: "destructive",
       });
     } finally {
       setLoading(false);
@@ -427,35 +429,32 @@ const Dashboard = () => {
   const handleShuttleAction = async (action: "action1" | "action2" | "action3" | "action4") => {
     setLoading(true);
     try {
-      const response = await fetch(
-        'https://eventinternal.leapmile.com/pubsub/publish?topic=Shuttle',
-        {
-          method: 'POST',
-          headers: {
-            'accept': 'application/json',
-            'Authorization': `Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhY2wiOiJhZG1pbiIsImV4cCI6MTkwMDY2MDExOX0.m9Rrmvbo22sJpWgTVynJLDIXFxOfym48F-kGy-wSKqQ`,
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ action })
-        }
-      );
-      
+      const response = await fetch("https://eventinternal.leapmile.com/pubsub/publish?topic=Shuttle", {
+        method: "POST",
+        headers: {
+          accept: "application/json",
+          Authorization: `Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhY2wiOiJhZG1pbiIsImV4cCI6MTkwMDY2MDExOX0.m9Rrmvbo22sJpWgTVynJLDIXFxOfym48F-kGy-wSKqQ`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ action }),
+      });
+
       const data = await response.json();
       const actionNames = {
         action1: "Retrieve tray",
         action2: "Release tray",
         action3: "Retrieve bin",
-        action4: "Release bin"
+        action4: "Release bin",
       };
       toast({
         title: "Shuttle Action",
-        description: `${actionNames[action]} executed successfully.`
+        description: `${actionNames[action]} executed successfully.`,
       });
     } catch (error) {
       toast({
         title: "Error",
         description: "Failed to execute action",
-        variant: "destructive"
+        variant: "destructive",
       });
     } finally {
       setLoading(false);
@@ -465,29 +464,26 @@ const Dashboard = () => {
   const handleScaraPickingAction = async () => {
     setLoading(true);
     try {
-      const response = await fetch(
-        'https://eventinternal.leapmile.com/pubsub/publish?topic=Scara',
-        {
-          method: 'POST',
-          headers: {
-            'accept': 'application/json',
-            'Authorization': `Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhY2wiOiJhZG1pbiIsImV4cCI6MTkwMDY2MDExOX0.m9Rrmvbo22sJpWgTVynJLDIXFxOfym48F-kGy-wSKqQ`,
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ action: "start_picking" })
-        }
-      );
-      
+      const response = await fetch("https://eventinternal.leapmile.com/pubsub/publish?topic=Scara", {
+        method: "POST",
+        headers: {
+          accept: "application/json",
+          Authorization: `Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhY2wiOiJhZG1pbiIsImV4cCI6MTkwMDY2MDExOX0.m9Rrmvbo22sJpWgTVynJLDIXFxOfym48F-kGy-wSKqQ`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ action: "start_picking" }),
+      });
+
       const data = await response.json();
       toast({
         title: "SCARA Action",
-        description: "Start picking action executed successfully."
+        description: "Start picking action executed successfully.",
       });
     } catch (error) {
       toast({
         title: "Error",
         description: "Failed to execute action",
-        variant: "destructive"
+        variant: "destructive",
       });
     } finally {
       setLoading(false);
@@ -497,30 +493,27 @@ const Dashboard = () => {
   const handleAmrAction = async (actionData: any) => {
     setLoading(true);
     try {
-      const response = await fetch(
-        'https://eventinternal.leapmile.com/pubsub/publish?topic=AMR_MAP',
-        {
-          method: 'POST',
-          headers: {
-            'accept': 'application/json',
-            'Authorization': `Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhY2wiOiJhZG1pbiIsImV4cCI6MTkwMDY2MDExOX0.m9Rrmvbo22sJpWgTVynJLDIXFxOfym48F-kGy-wSKqQ`,
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(actionData)
-        }
-      );
-      
+      const response = await fetch("https://eventinternal.leapmile.com/pubsub/publish?topic=AMR_MAP", {
+        method: "POST",
+        headers: {
+          accept: "application/json",
+          Authorization: `Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhY2wiOiJhZG1pbiIsImV4cCI6MTkwMDY2MDExOX0.m9Rrmvbo22sJpWgTVynJLDIXFxOfym48F-kGy-wSKqQ`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(actionData),
+      });
+
       const data = await response.json();
       const actionKey = Object.keys(actionData)[0];
       toast({
         title: "AMR Action",
-        description: `Sequence ${actionKey} executed successfully.`
+        description: `Sequence ${actionKey} executed successfully.`,
       });
     } catch (error) {
       toast({
         title: "Error",
         description: "Failed to execute action",
-        variant: "destructive"
+        variant: "destructive",
       });
     } finally {
       setLoading(false);
@@ -537,32 +530,32 @@ const Dashboard = () => {
         const response = await fetch(
           `https://robotmanagerv1test.qikpod.com/robotmanager/retrieve_tray?tray_id=Tray2&required_tags=station&required_tags=scara`,
           {
-            method: 'POST',
+            method: "POST",
             headers: {
-              'accept': 'application/json',
-              'Authorization': `Bearer ${token}`
-            }
-          }
+              accept: "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          },
         );
-        
+
         const data = await response.json();
-        if (data.status === 'success') {
+        if (data.status === "success") {
           toast({
             title: "Item Retrieved",
-            description: `Item ${selectedTray} retrieved successfully via SCARA.`
+            description: `Item ${selectedTray} retrieved successfully via SCARA.`,
           });
         } else {
           toast({
             title: "Error",
             description: "Failed to retrieve item",
-            variant: "destructive"
+            variant: "destructive",
           });
         }
       } catch (error) {
         toast({
           title: "Error",
           description: "Failed to connect to server",
-          variant: "destructive"
+          variant: "destructive",
         });
       } finally {
         setLoading(false);
@@ -574,17 +567,17 @@ const Dashboard = () => {
           `https://robotmanagerv1test.qikpod.com/robotmanager/task?tray_id=${selectedTray}&task_status=inprogress&order_by_field=updated_at&order_by_type=ASC`,
           {
             headers: {
-              'accept': 'application/json',
-              'Authorization': `Bearer ${token}`
-            }
-          }
+              accept: "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          },
         );
-        
+
         const inProgressData = await inProgressResponse.json();
-        if (inProgressData.status === 'success' && inProgressData.records?.length > 0) {
+        if (inProgressData.status === "success" && inProgressData.records?.length > 0) {
           toast({
             title: "Tray In Progress",
-            description: `Tray ${selectedTray} is currently in progress.`
+            description: `Tray ${selectedTray} is currently in progress.`,
           });
           setLoading(false);
           setDrawerOpen(false);
@@ -601,17 +594,17 @@ const Dashboard = () => {
           `https://robotmanagerv1test.qikpod.com/robotmanager/task?tray_id=${selectedTray}&task_status=pending&order_by_field=updated_at&order_by_type=ASC`,
           {
             headers: {
-              'accept': 'application/json',
-              'Authorization': `Bearer ${token}`
-            }
-          }
+              accept: "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          },
         );
-        
+
         const pendingData = await pendingResponse.json();
-        if (pendingData.status === 'success' && pendingData.records?.length > 0) {
+        if (pendingData.status === "success" && pendingData.records?.length > 0) {
           toast({
             title: "Tray Pending",
-            description: `Tray ${selectedTray} is pending.`
+            description: `Tray ${selectedTray} is pending.`,
           });
           setLoading(false);
           setDrawerOpen(false);
@@ -628,17 +621,17 @@ const Dashboard = () => {
           `https://robotmanagerv1test.qikpod.com/robotmanager/is_tray_ready?tray_id=${selectedTray}`,
           {
             headers: {
-              'accept': 'application/json',
-              'Authorization': `Bearer ${token}`
-            }
-          }
+              accept: "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          },
         );
-        
+
         const readyData = await readyResponse.json();
-        if (readyData.status === 'success') {
+        if (readyData.status === "success") {
           toast({
             title: "Tray Ready",
-            description: `Tray ${selectedTray} is already at the station.`
+            description: `Tray ${selectedTray} is already at the station.`,
           });
           setLoading(false);
           setDrawerOpen(false);
@@ -654,38 +647,38 @@ const Dashboard = () => {
         const response = await fetch(
           `https://robotmanagerv1test.qikpod.com/robotmanager/retrieve_tray?tray_id=${selectedTray}&required_tags=station&required_tags=${selectedSystem}`,
           {
-            method: 'POST',
+            method: "POST",
             headers: {
-              'accept': 'application/json',
-              'Authorization': `Bearer ${token}`
-            }
-          }
+              accept: "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          },
         );
-        
+
         const data = await response.json();
-        if (data.status === 'success') {
+        if (data.status === "success") {
           toast({
             title: "Tray Retrieved",
-            description: `Tray ${selectedTray} retrieval initiated via ${selectedSystem}.`
+            description: `Tray ${selectedTray} retrieval initiated via ${selectedSystem}.`,
           });
         } else {
           toast({
             title: "Error",
             description: "Failed to retrieve tray",
-            variant: "destructive"
+            variant: "destructive",
           });
         }
       } catch (error) {
         toast({
           title: "Error",
           description: "Failed to connect to server",
-          variant: "destructive"
+          variant: "destructive",
         });
       } finally {
         setLoading(false);
       }
     }
-    
+
     setDrawerOpen(false);
     setSelectedTray("");
   };
@@ -693,31 +686,37 @@ const Dashboard = () => {
     logout();
     toast({
       title: "Logged Out",
-      description: "You have been logged out successfully."
+      description: "You have been logged out successfully.",
     });
     navigate("/login");
   };
-  return <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/20 p-4 md:p-8">
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/20 p-4 md:p-8">
       <div className="max-w-6xl mx-auto">
         <div className="fixed top-4 right-4 z-50 animate-fade-in">
           <Button onClick={handleLogout} variant="outline" size="icon" className="rounded-full shadow-lg">
             <LogOut className="h-5 w-5" />
           </Button>
         </div>
-        
+
         <div className="text-center mb-4 animate-fade-in">
           <h1 className="md:text-4xl font-bold text-foreground mb-1 text-lg">Leapmile Systems</h1>
           <p className="text-sm text-muted-foreground">Direct system controls</p>
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-8">
-          {systemControls.map((control, index) => <div key={control.id} className="animate-scale-in" style={{
-          animationDelay: `${index * 0.1}s`
-        }}>
+          {systemControls.map((control, index) => (
+            <div
+              key={control.id}
+              className="animate-scale-in"
+              style={{
+                animationDelay: `${index * 0.1}s`,
+              }}
+            >
               <FeatureCard {...control} onClick={() => handleControlClick(control.name)} />
-            </div>)}
+            </div>
+          ))}
         </div>
-
 
         <Drawer open={drawerOpen} onOpenChange={setDrawerOpen}>
           <DrawerContent className="h-[65vh]">
@@ -762,7 +761,7 @@ const Dashboard = () => {
                 {!isControlDrawer && selectedSystem}
               </DrawerTitle>
             </DrawerHeader>
-            
+
             <div className="flex flex-col h-full overflow-y-auto p-4">
               {isControlDrawer ? (
                 <>
@@ -782,14 +781,16 @@ const Dashboard = () => {
                             </div>
                             <div className="flex justify-between">
                               <span className="text-muted-foreground">Timestamp:</span>
-                              <span className="text-foreground font-medium">{new Date(amrStatus.created_at).toLocaleString()}</span>
+                              <span className="text-foreground font-medium">
+                                {new Date(amrStatus.created_at).toLocaleString()}
+                              </span>
                             </div>
                           </div>
                         </div>
                       )}
                       <div className="grid grid-cols-2 gap-3">
-                        <Button 
-                          onClick={() => handleAmrAction({"commands": ["L", "M"]})} 
+                        <Button
+                          onClick={() => handleAmrAction({ commands: ["M", "D"] })}
                           disabled={loading}
                           className="w-full py-6 text-lg font-semibold"
                         >
@@ -802,8 +803,8 @@ const Dashboard = () => {
                             "Sequence 1"
                           )}
                         </Button>
-                        <Button 
-                          onClick={() => handleAmrAction({"commands": ["L", "M", "R", "L", "D", "R"]})} 
+                        <Button
+                          onClick={() => handleAmrAction({ commands: ["L", "M", "R", "L", "D", "R"] })}
                           disabled={loading}
                           className="w-full py-6 text-lg font-semibold"
                           variant="secondary"
@@ -817,8 +818,8 @@ const Dashboard = () => {
                             "Sequence 2"
                           )}
                         </Button>
-                        <Button 
-                          onClick={() => handleAmrAction({"commands": ["J", "K"]})} 
+                        <Button
+                          onClick={() => handleAmrAction({ commands: ["J", "K"] })}
                           disabled={loading}
                           className="w-full py-6 text-lg font-semibold"
                           variant="outline"
@@ -832,8 +833,8 @@ const Dashboard = () => {
                             "Sequence 3"
                           )}
                         </Button>
-                        <Button 
-                          onClick={() => handleAmrAction({"commands": ["E"]})} 
+                        <Button
+                          onClick={() => handleAmrAction({ commands: ["E"] })}
                           disabled={loading}
                           className="w-full py-6 text-lg font-semibold"
                         >
@@ -846,8 +847,8 @@ const Dashboard = () => {
                             "Start"
                           )}
                         </Button>
-                        <Button 
-                          onClick={() => handleAmrAction({"commands": ["X"]})} 
+                        <Button
+                          onClick={() => handleAmrAction({ commands: ["X"] })}
                           disabled={loading}
                           className="w-full py-6 text-lg font-semibold"
                           variant="destructive"
@@ -861,8 +862,8 @@ const Dashboard = () => {
                             "Stop"
                           )}
                         </Button>
-                        <Button 
-                          onClick={() => handleAmrAction({"commands": ["LOOP"]})} 
+                        <Button
+                          onClick={() => handleAmrAction({ commands: ["LOOP"] })}
                           disabled={loading}
                           className="w-full py-6 text-lg font-semibold"
                           variant="secondary"
@@ -891,18 +892,22 @@ const Dashboard = () => {
                             </div>
                             <div className="flex justify-between">
                               <span className="text-muted-foreground">Last Action:</span>
-                              <span className="text-foreground font-medium capitalize">{bayDoorStatus.message?.action?.replace(/_/g, ' ')}</span>
+                              <span className="text-foreground font-medium capitalize">
+                                {bayDoorStatus.message?.action?.replace(/_/g, " ")}
+                              </span>
                             </div>
                             <div className="flex justify-between">
                               <span className="text-muted-foreground">Timestamp:</span>
-                              <span className="text-foreground font-medium">{new Date(bayDoorStatus.created_at).toLocaleString()}</span>
+                              <span className="text-foreground font-medium">
+                                {new Date(bayDoorStatus.created_at).toLocaleString()}
+                              </span>
                             </div>
                           </div>
                         </div>
                       )}
                       <div className="flex-1 flex flex-col gap-4 justify-center">
-                        <Button 
-                          onClick={() => handleBayDoorAction("open_door")} 
+                        <Button
+                          onClick={() => handleBayDoorAction("open_door")}
                           disabled={loading}
                           className="w-full py-8 text-xl font-semibold"
                         >
@@ -915,8 +920,8 @@ const Dashboard = () => {
                             "Open Door"
                           )}
                         </Button>
-                        <Button 
-                          onClick={() => handleBayDoorAction("close_door")} 
+                        <Button
+                          onClick={() => handleBayDoorAction("close_door")}
                           disabled={loading}
                           className="w-full py-8 text-xl font-semibold"
                           variant="secondary"
@@ -945,18 +950,22 @@ const Dashboard = () => {
                             </div>
                             <div className="flex justify-between">
                               <span className="text-muted-foreground">Last Action:</span>
-                              <span className="text-foreground font-medium capitalize">{lockerStatus.message?.action}</span>
+                              <span className="text-foreground font-medium capitalize">
+                                {lockerStatus.message?.action}
+                              </span>
                             </div>
                             <div className="flex justify-between">
                               <span className="text-muted-foreground">Timestamp:</span>
-                              <span className="text-foreground font-medium">{new Date(lockerStatus.created_at).toLocaleString()}</span>
+                              <span className="text-foreground font-medium">
+                                {new Date(lockerStatus.created_at).toLocaleString()}
+                              </span>
                             </div>
                           </div>
                         </div>
                       )}
                       <div className="flex-1 flex flex-col gap-4 justify-center">
-                        <Button 
-                          onClick={() => handleLockerAction("open")} 
+                        <Button
+                          onClick={() => handleLockerAction("open")}
                           disabled={loading}
                           className="w-full py-8 text-xl font-semibold"
                         >
@@ -984,18 +993,22 @@ const Dashboard = () => {
                             </div>
                             <div className="flex justify-between">
                               <span className="text-muted-foreground">Last Action:</span>
-                              <span className="text-foreground font-medium capitalize">{conveyorStatus.message?.action}</span>
+                              <span className="text-foreground font-medium capitalize">
+                                {conveyorStatus.message?.action}
+                              </span>
                             </div>
                             <div className="flex justify-between">
                               <span className="text-muted-foreground">Timestamp:</span>
-                              <span className="text-foreground font-medium">{new Date(conveyorStatus.created_at).toLocaleString()}</span>
+                              <span className="text-foreground font-medium">
+                                {new Date(conveyorStatus.created_at).toLocaleString()}
+                              </span>
                             </div>
                           </div>
                         </div>
                       )}
                       <div className="flex-1 flex flex-col gap-4 justify-center">
-                        <Button 
-                          onClick={() => handleConveyorAction("eject")} 
+                        <Button
+                          onClick={() => handleConveyorAction("eject")}
                           disabled={loading}
                           className="w-full py-8 text-xl font-semibold"
                         >
@@ -1008,8 +1021,8 @@ const Dashboard = () => {
                             "Eject Tray"
                           )}
                         </Button>
-                        <Button 
-                          onClick={() => handleConveyorAction("inject")} 
+                        <Button
+                          onClick={() => handleConveyorAction("inject")}
                           disabled={loading}
                           className="w-full py-8 text-xl font-semibold"
                           variant="secondary"
@@ -1028,8 +1041,8 @@ const Dashboard = () => {
                   )}
                   {selectedSystem === "SCISSOR LIFT" && (
                     <div className="flex-1 flex flex-col gap-4 justify-center">
-                      <Button 
-                        onClick={() => handleScissorLiftAction("up")} 
+                      <Button
+                        onClick={() => handleScissorLiftAction("up")}
                         disabled={loading}
                         className="w-full py-8 text-xl font-semibold"
                       >
@@ -1042,8 +1055,8 @@ const Dashboard = () => {
                           "Up"
                         )}
                       </Button>
-                      <Button 
-                        onClick={() => handleScissorLiftAction("down")} 
+                      <Button
+                        onClick={() => handleScissorLiftAction("down")}
                         disabled={loading}
                         className="w-full py-8 text-xl font-semibold"
                         variant="secondary"
@@ -1071,24 +1084,28 @@ const Dashboard = () => {
                             </div>
                             <div className="flex justify-between">
                               <span className="text-muted-foreground">Last Action:</span>
-                              <span className="text-foreground font-medium capitalize">{shuttleStatus.message?.action}</span>
+                              <span className="text-foreground font-medium capitalize">
+                                {shuttleStatus.message?.action}
+                              </span>
                             </div>
                             <div className="flex justify-between">
                               <span className="text-muted-foreground">Timestamp:</span>
-                              <span className="text-foreground font-medium">{new Date(shuttleStatus.created_at).toLocaleString()}</span>
+                              <span className="text-foreground font-medium">
+                                {new Date(shuttleStatus.created_at).toLocaleString()}
+                              </span>
                             </div>
                           </div>
                         </div>
                       )}
                       <div className="flex gap-2 mb-4">
-                        <Button 
+                        <Button
                           onClick={() => setSelectedShuttleControl("tray")}
                           variant={selectedShuttleControl === "tray" ? "default" : "outline"}
                           className="flex-1"
                         >
                           Shuttle Tray
                         </Button>
-                        <Button 
+                        <Button
                           onClick={() => setSelectedShuttleControl("bin")}
                           variant={selectedShuttleControl === "bin" ? "default" : "outline"}
                           className="flex-1"
@@ -1099,8 +1116,8 @@ const Dashboard = () => {
                       <div className="flex-1 flex flex-col gap-4 justify-center">
                         {selectedShuttleControl === "tray" ? (
                           <>
-                            <Button 
-                              onClick={() => handleShuttleAction("action1")} 
+                            <Button
+                              onClick={() => handleShuttleAction("action1")}
                               disabled={loading}
                               className="w-full py-8 text-xl font-semibold"
                             >
@@ -1113,8 +1130,8 @@ const Dashboard = () => {
                                 "Retrieve tray"
                               )}
                             </Button>
-                            <Button 
-                              onClick={() => handleShuttleAction("action2")} 
+                            <Button
+                              onClick={() => handleShuttleAction("action2")}
                               disabled={loading}
                               className="w-full py-8 text-xl font-semibold"
                               variant="secondary"
@@ -1131,8 +1148,8 @@ const Dashboard = () => {
                           </>
                         ) : (
                           <>
-                            <Button 
-                              onClick={() => handleShuttleAction("action3")} 
+                            <Button
+                              onClick={() => handleShuttleAction("action3")}
                               disabled={loading}
                               className="w-full py-8 text-xl font-semibold"
                             >
@@ -1145,8 +1162,8 @@ const Dashboard = () => {
                                 "Retrieve bin"
                               )}
                             </Button>
-                            <Button 
-                              onClick={() => handleShuttleAction("action4")} 
+                            <Button
+                              onClick={() => handleShuttleAction("action4")}
                               disabled={loading}
                               className="w-full py-8 text-xl font-semibold"
                               variant="secondary"
@@ -1177,18 +1194,22 @@ const Dashboard = () => {
                             </div>
                             <div className="flex justify-between">
                               <span className="text-muted-foreground">Last Action:</span>
-                              <span className="text-foreground font-medium capitalize">{scaraStatus.message?.action?.replace(/_/g, ' ')}</span>
+                              <span className="text-foreground font-medium capitalize">
+                                {scaraStatus.message?.action?.replace(/_/g, " ")}
+                              </span>
                             </div>
                             <div className="flex justify-between">
                               <span className="text-muted-foreground">Timestamp:</span>
-                              <span className="text-foreground font-medium">{new Date(scaraStatus.created_at).toLocaleString()}</span>
+                              <span className="text-foreground font-medium">
+                                {new Date(scaraStatus.created_at).toLocaleString()}
+                              </span>
                             </div>
                           </div>
                         </div>
                       )}
                       <div className="flex-1 flex flex-col gap-4 justify-center">
-                        <Button 
-                          onClick={handleScaraPickingAction} 
+                        <Button
+                          onClick={handleScaraPickingAction}
                           disabled={loading}
                           className="w-full py-8 text-xl font-semibold"
                         >
@@ -1217,13 +1238,13 @@ const Dashboard = () => {
                         <p>No trays available</p>
                       </div>
                     ) : (
-                      trays.map(tray => (
-                        <button 
-                          key={tray.id} 
-                          onClick={() => setSelectedTray(tray.tray_id)} 
+                      trays.map((tray) => (
+                        <button
+                          key={tray.id}
+                          onClick={() => setSelectedTray(tray.tray_id)}
                           className={`w-full p-4 rounded-lg border-2 text-left transition-all ${
-                            selectedTray === tray.tray_id 
-                              ? "border-accent bg-accent/10" 
+                            selectedTray === tray.tray_id
+                              ? "border-accent bg-accent/10"
                               : "border-border bg-card hover:border-accent/50"
                           }`}
                         >
@@ -1248,10 +1269,10 @@ const Dashboard = () => {
                       ))
                     )}
                   </div>
-                  
-                  <Button 
-                    onClick={handleRequestTray} 
-                    disabled={!selectedTray || loading} 
+
+                  <Button
+                    onClick={handleRequestTray}
+                    disabled={!selectedTray || loading}
                     className="w-full py-6 text-lg font-semibold"
                   >
                     {loading ? (
@@ -1260,9 +1281,15 @@ const Dashboard = () => {
                         Processing...
                       </>
                     ) : selectedTray ? (
-                      selectedSystem === "SCARA" ? `Retrieve Item ${selectedTray}` : `Request Tray ${selectedTray}`
+                      selectedSystem === "SCARA" ? (
+                        `Retrieve Item ${selectedTray}`
+                      ) : (
+                        `Request Tray ${selectedTray}`
+                      )
+                    ) : selectedSystem === "SCARA" ? (
+                      "Select an Item"
                     ) : (
-                      selectedSystem === "SCARA" ? "Select an Item" : "Select a Tray"
+                      "Select a Tray"
                     )}
                   </Button>
                 </>
@@ -1270,8 +1297,8 @@ const Dashboard = () => {
             </div>
           </DrawerContent>
         </Drawer>
-
       </div>
-    </div>;
+    </div>
+  );
 };
 export default Dashboard;
